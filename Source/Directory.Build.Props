@@ -6,7 +6,7 @@
 		<BaseIntermediateOutputPath>$(IntermediatePath)\DotNet\$(Configuration)\$(MSBuildProjectName)</BaseIntermediateOutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-		<UoEngineThirdParty>$(UO3DRoot)\ThirdParty\</UoEngineThirdParty>
+		<UO3DThirdParty>$(UO3DRoot)\ThirdParty\</UO3DThirdParty>
 	</PropertyGroup>
 
 	<PropertyGroup>

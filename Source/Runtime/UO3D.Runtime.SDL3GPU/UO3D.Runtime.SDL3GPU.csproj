@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UO3D.Runtime.Platform\UO3D.Runtime.Platform.csproj" />
+    <ProjectReference Include="..\UO3D.Runtime.Plugin\UO3D.Runtime.Plugin.csproj" />
+    <ProjectReference Include="..\UO3D.Runtime.Renderer\UO3D.Runtime.Renderer.csproj" />
+  </ItemGroup>
+
+</Project>

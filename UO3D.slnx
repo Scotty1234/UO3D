@@ -1,3 +1,25 @@
 <Solution>
-  <Project Path="Source/UO3D/UO3D.csproj" />
+  <Configurations>
+    <Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/Game/">
+    <Project Path="Source/UO3D/UO3D.csproj">
+      <Platform Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/Runtime/">
+    <Project Path="Source/Runtime/UO3D.Runtime.Core/UO3D.Runtime.Core.csproj">
+      <Platform Project="x64" />
+    </Project>
+    <Project Path="Source/Runtime/UO3D.Runtime.Platform/UO3D.Runtime.Platform.csproj" />
+    <Project Path="Source/Runtime/UO3D.Runtime.Plugin/UO3D.Runtime.Plugin.csproj" />
+    <Project Path="Source/Runtime/UO3D.Runtime.Renderer/UO3D.Runtime.Renderer.csproj" />
+    <Project Path="Source/Runtime/UO3D.Runtime.SDL3GPU/UO3D.Runtime.SDL3GPU.csproj" Id="49da6025-83a9-4034-875a-777bbeffdbae" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="Source/Directory.Build.Props" />
+  </Folder>
+  <Folder Name="/ThirdParty/">
+    <Project Path="ThirdParty/FNA/FNA.Core.csproj" />
+  </Folder>
 </Solution>
