@@ -1,0 +1,17 @@
+<Project>
+	<PropertyGroup>
+		<UO3DRoot>$(MSBuildThisFileDirectory)\..\</UO3DRoot>
+		<IntermediatePath>$(UO3DRoot)\Intermediate</IntermediatePath>
+		<OutputPath>$(UO3DRoot)\Binaries\Win64\$(Configuration)\</OutputPath>
+		<BaseIntermediateOutputPath>$(IntermediatePath)\DotNet\$(Configuration)\$(MSBuildProjectName)</BaseIntermediateOutputPath>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+		<UoEngineThirdParty>$(UO3DRoot)\ThirdParty\</UoEngineThirdParty>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+	</PropertyGroup>
+
+</Project>

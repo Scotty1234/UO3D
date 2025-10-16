@@ -1,0 +1,6 @@
+[submodule "ThirdParty/SDL3-CS"]
+	path = ThirdParty/SDL3-CS
+	url = https://github.com/flibitijibibo/SDL3-CS.git
+[submodule "ThirdParty/ClassicUO"]
+	path = ThirdParty/ClassicUO
+	url = https://github.com/ClassicUO/ClassicUO.git
