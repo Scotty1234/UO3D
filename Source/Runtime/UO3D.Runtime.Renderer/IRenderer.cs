@@ -5,7 +5,7 @@ public interface IRenderer
     public event Action<IRenderContext>? OnFrameBegin;
     public event Action<IRenderContext>? OnFrameEnd;
 
-    public void RaiseFrameBegin();
+    public void FrameBegin();
 
-    public void RaiseFrameEnd();
+    public void FrameEnd();
 }

@@ -1,4 +1,5 @@
 ﻿using SDL3;
+
 using UO3D.Runtime.Platform;
 using UO3D.Runtime.Renderer;
 
@@ -13,6 +14,8 @@ public class SDL3GPURenderer : IRenderer
     private readonly IWindow _window;
 
     private IntPtr _gpuDevice;
+
+    private SDL3GPUSwapChain _swapChain;
 
     public SDL3GPURenderer(IWindow window)
     {
@@ -34,6 +37,8 @@ public class SDL3GPURenderer : IRenderer
        {
             throw new Exception("Failed to claim window for GPU device.");
        }
+
+       _swapChain = new SDL3GPUSwapChain(_gpuDevice, _window.Handle);
     }
 
     public void Shutdown()
@@ -41,13 +46,22 @@ public class SDL3GPURenderer : IRenderer
         SDL.SDL_DestroyGPUDevice(_gpuDevice);
     }
 
-    public void RaiseFrameBegin()
+    public void FrameBegin()
     {
+        _context.BeginRecording(_gpuDevice);
+
+        _swapChain.Acquire(_context);
+
+        _context.BeginRenderPass(new RenderPassInfo());
+
         OnFrameBegin?.Invoke(_context);
     }
 
-    public void RaiseFrameEnd()
+    public void FrameEnd()
     {
         OnFrameEnd?.Invoke(_context);
+
+        _context.EndRenderPass();
+        _context.EndRecording();
     }
 }

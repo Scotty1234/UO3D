@@ -4,9 +4,9 @@ namespace UO3D;
 
 internal class UO3DApplication: Application
 {
-
-    public void Run()
+    protected override void Initialise()
     {
 
     }
+
 }

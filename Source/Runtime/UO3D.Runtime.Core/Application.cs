@@ -57,7 +57,12 @@ public class Application: IDisposable
         }
     }
 
-    protected void Initialise()
+    public T GetService<T>()
+    {
+        return _serviceProvider.GetRequiredService<T>();
+    }
+
+    virtual protected void Initialise()
     {
 
     }
@@ -76,8 +81,8 @@ public class Application: IDisposable
 
         _serviceProvider = _services.BuildServiceProvider();
 
-        _applicationLoop = _serviceProvider.GetRequiredService<ApplicationLoop>();
-        _renderer = _serviceProvider.GetRequiredService<IRenderer>();
+        _applicationLoop = GetService<ApplicationLoop>();
+        _renderer = GetService<IRenderer>();
 
         var plugins = _serviceProvider.GetServices<IPlugin>();
 
@@ -86,7 +91,7 @@ public class Application: IDisposable
             plugin.Startup();
         }
 
-        var entityManager = _serviceProvider.GetRequiredService<EntityManager>();
+        var entityManager = GetService<EntityManager>();
 
         _camera = entityManager.NewEntity<CameraEntity>();
     }
@@ -110,14 +115,14 @@ public class Application: IDisposable
 
         //_renderer.RenderContext.View = _camera.Projection * _camera.View;
 
-        _renderer.RaiseFrameBegin();
+        _renderer.FrameBegin();
 
         return true;
     }
 
     private void EndDraw()
     {
-        _renderer.RaiseFrameEnd();
+        _renderer.FrameEnd();
     }
 
     private void LoadPlugins(string directory, bool recurse = false)
