@@ -3,7 +3,7 @@
     <Platform Name="x64" />
   </Configurations>
   <Folder Name="/Game/">
-    <Project Path="Source/UO3D/UO3D.csproj">
+    <Project Path="Source/Game/UO3D/UO3D.csproj">
       <Platform Project="x64" />
     </Project>
   </Folder>
