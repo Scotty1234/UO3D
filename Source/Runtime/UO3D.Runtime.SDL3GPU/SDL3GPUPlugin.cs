@@ -16,6 +16,7 @@ public class SDL3GPUPlugin: IPlugin
     public static void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<IRenderer, SDL3GPURenderer>();
+        services.AddSingleton<IRenderResourceFactory, SDL3GPUResourceFactory>();
     }
 
     public void Startup()

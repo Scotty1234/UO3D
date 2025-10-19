@@ -10,10 +10,10 @@ public class SDL3GPURenderer : IRenderer
     public event Action<IRenderContext>? OnFrameBegin;
     public event Action<IRenderContext>? OnFrameEnd;
 
+    public IntPtr Device { get; private set; }
+
     private readonly SDL3GPURenderContext _context = new();
     private readonly IWindow _window;
-
-    private IntPtr _gpuDevice;
 
     private SDL3GPUSwapChain _swapChain;
 
@@ -26,29 +26,29 @@ public class SDL3GPURenderer : IRenderer
     {
         SDL.SDL_GPUShaderFormat flags = SDL.SDL_GPUShaderFormat.SDL_GPU_SHADERFORMAT_DXIL;
 
-        _gpuDevice = SDL.SDL_CreateGPUDevice(flags, true, null);
+        Device = SDL.SDL_CreateGPUDevice(flags, true, null);
 
-        if(_gpuDevice == IntPtr.Zero)
+        if(Device == IntPtr.Zero)
         {
             throw new Exception("Failed to initialise GPU device.");
         }
 
-       if(SDL.SDL_ClaimWindowForGPUDevice(_gpuDevice, _window.Handle) == false)
+       if(SDL.SDL_ClaimWindowForGPUDevice(Device, _window.Handle) == false)
        {
             throw new Exception("Failed to claim window for GPU device.");
        }
 
-       _swapChain = new SDL3GPUSwapChain(_gpuDevice, _window.Handle);
+       _swapChain = new SDL3GPUSwapChain(Device, _window.Handle);
     }
 
     public void Shutdown()
     {
-        SDL.SDL_DestroyGPUDevice(_gpuDevice);
+        SDL.SDL_DestroyGPUDevice(Device);
     }
 
     public void FrameBegin()
     {
-        _context.BeginRecording(_gpuDevice);
+        _context.BeginRecording(Device);
 
         _swapChain.Acquire(_context);
 

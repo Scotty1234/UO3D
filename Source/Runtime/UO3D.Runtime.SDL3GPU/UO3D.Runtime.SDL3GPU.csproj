@@ -6,7 +6,13 @@
     <Nullable>enable</Nullable>
 	  <Platforms>x64</Platforms>
 	  <PlatformTarget>x64</PlatformTarget>
+	  <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Vortice.Direct3D12" Version="3.6.2" />
+    <PackageReference Include="Vortice.Dxc" Version="3.6.2" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\UO3D.Runtime.Platform\UO3D.Runtime.Platform.csproj" />

@@ -143,6 +143,12 @@ public class Application: IDisposable
         foreach (var dll in Directory.GetFiles(directory, "*.dll"))
         {
             Assembly assembly;
+
+            if(Path.GetFileName(dll).StartsWith("UO3D") == false)
+            {
+                continue;
+            }
+
             try
             {
                 assembly = Assembly.LoadFrom(dll);
