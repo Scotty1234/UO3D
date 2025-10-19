@@ -67,12 +67,10 @@ internal class SDL3GPURenderContext: IRenderContext
             cycle_resolve_texture = false,
         };
 
-        SDL_GPUDepthStencilTargetInfo depthTargetInfo = new()
-        {
-            
-        };
+        SDL_GPUDepthStencilTargetInfo depthTargetInfo = default;
 
-        _renderPass = SDL_BeginGPURenderPass(RecordedCommands, [colourTargetInfo], 1, ref depthTargetInfo);
+        // Note I changed the SDL binding here to ignore depth for now.
+        _renderPass = SDL_BeginGPURenderPass(RecordedCommands, [colourTargetInfo], 1, IntPtr.Zero);
 
         Debug.Assert(_renderPass != IntPtr.Zero);
 

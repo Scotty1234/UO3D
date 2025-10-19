@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Runtime\UO3D.Runtime.Core\UO3D.Runtime.Core.csproj" />
+    <ProjectReference Include="..\..\Runtime\UO3D.Runtime.Core\UO3D.Runtime.Core.csproj" />
   </ItemGroup>
 
 </Project>
