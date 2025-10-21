@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using UO3D.Runtime.Renderer.Resources;
+using UO3D.Runtime.RHI.Resources;
 using static SDL3.SDL;
 
 namespace UO3D.Runtime.SDL3GPU.Resources;
@@ -10,7 +10,7 @@ internal class SDL3GPUShaderProgram
     public readonly ShaderProgramType Type;
     public readonly IntPtr Handle;
 
-    public readonly Dictionary<string, ShaderParameter> Parameters;
+    public readonly List<ShaderParameter> Parameters = [];
 
     public SDL3GPUShaderProgram(IntPtr device, ShaderProgramType type, in ShaderProgramCompileResult compileResult)
     {
@@ -50,7 +50,7 @@ internal class SDL3GPUShaderProgram
 
         foreach(var input in compileResult.InputParameters)
         {
-            Parameters.Add(input.Name, input);
+            Parameters.Add(input);
         }
     }
 }

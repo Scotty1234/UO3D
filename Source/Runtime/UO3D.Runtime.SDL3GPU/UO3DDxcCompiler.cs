@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using UO3D.Runtime.Renderer.Resources;
+using UO3D.Runtime.RHI.Resources;
 using Vortice.Dxc;
 using Vortice.Direct3D12.Shader;
 

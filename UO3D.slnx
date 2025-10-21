@@ -15,9 +15,12 @@
       <Platform Project="x64" />
     </Project>
     <Project Path="Source/Runtime/UO3D.Runtime.Plugin/UO3D.Runtime.Plugin.csproj">
-          <Platform Project="x64" />
+      <Platform Project="x64" />
     </Project>
     <Project Path="Source/Runtime/UO3D.Runtime.Renderer/UO3D.Runtime.Renderer.csproj">
+      <Platform Project="x64" />
+    </Project>
+    <Project Path="Source/Runtime/UO3D.Runtime.RHI/UO3D.Runtime.RHI.csproj" Id="2df74534-3bc8-471e-acb2-c5af9aa62fa7">
       <Platform Project="x64" />
     </Project>
     <Project Path="Source/Runtime/UO3D.Runtime.SDL3GPU/UO3D.Runtime.SDL3GPU.csproj" Id="49da6025-83a9-4034-875a-777bbeffdbae">

@@ -1,6 +1,6 @@
-﻿using UO3D.Runtime.Renderer.Resources;
+﻿using UO3D.Runtime.RHI.Resources;
 
-namespace UO3D.Runtime.Renderer;
+namespace UO3D.Runtime.RHI;
 
 public interface IRenderResourceFactory
 {

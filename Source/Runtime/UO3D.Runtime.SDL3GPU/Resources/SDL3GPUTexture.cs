@@ -1,5 +1,4 @@
-﻿using SDL3;
-using UO3D.Runtime.Renderer.Resources;
+﻿using UO3D.Runtime.RHI.Resources;
 using static SDL3.SDL;
 
 namespace UO3D.Runtime.SDL3GPU.Resources;

@@ -1,7 +1,6 @@
-﻿using Vortice.Dxc;
+﻿using UO3D.Runtime.RHI;
+using UO3D.Runtime.RHI.Resources;
 
-using UO3D.Runtime.Renderer;
-using UO3D.Runtime.Renderer.Resources;
 using UO3D.Runtime.SDL3GPU.Resources;
 
 namespace UO3D.Runtime.SDL3GPU;
@@ -31,5 +30,14 @@ internal class SDL3GPUResourceFactory : IRenderResourceFactory
     public IRenderTexture CreateTexture(int width, int height)
     {
         throw new NotImplementedException();
+    }
+
+    public IGraphicsPipeline CreateGraphicsPipeline(IShaderInstance shaderInstance)
+    {
+        SDL3GPUShaderInstance sdl3GpuShaderInstance = (shaderInstance as SDL3GPUShaderInstance)!;
+
+        var pipeline = new Sdl3GpuGraphicsPipeline(_device, sdl3GpuShaderInstance.VertexProgram, sdl3GpuShaderInstance.PixelProgram);
+
+        return pipeline;
     }
 }

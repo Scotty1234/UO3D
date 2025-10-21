@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using static SDL3.SDL;
 
-using UO3D.Runtime.Renderer;
-using UO3D.Runtime.Renderer.Resources;
+using UO3D.Runtime.RHI;
+using UO3D.Runtime.RHI.Resources;
 using UO3D.Runtime.SDL3GPU.Resources;
 
 namespace UO3D.Runtime.SDL3GPU;
@@ -26,16 +26,33 @@ internal class SDL3GPURenderContext: IRenderContext
         }
     }
 
+    public IGraphicsPipeline GraphicsPipline 
+    {
+        get => _graphicsPipeline;
+        set
+        {
+            if (_graphicsPipeline == value)
+            {
+                return;
+            }
+
+            _graphicsPipeline = value;
+            _pipelineDirty = true;
+        }
+    }
+
     private IntPtr _renderPass;
     private IShaderInstance _shaderInstance;
+    private IGraphicsPipeline _graphicsPipeline;
+
     private bool _stateDirty = true;
+    private bool _pipelineDirty = true;
 
     public void BeginRecording(IntPtr device)
     {
         RecordedCommands = SDL_AcquireGPUCommandBuffer(device);
 
         Debug.Assert(RecordedCommands != IntPtr.Zero);
-
     }
 
     public void EndRecording()
@@ -85,16 +102,13 @@ internal class SDL3GPURenderContext: IRenderContext
         _renderPass = IntPtr.Zero;
     }
 
-    public void Draw()
+    public void DrawIndexedPrimitives(uint numInstances)
     {
         if(_stateDirty)
         {
             _stateDirty = false;
         }
-    }
 
-    public void BindShader(IShaderInstance shaderInstance)
-    {
-        throw new NotImplementedException();
+        SDL_DrawGPUIndexedPrimitives(_renderPass, 6, numInstances, 0, 0, 0);
     }
 }

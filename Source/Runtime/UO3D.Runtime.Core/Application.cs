@@ -19,7 +19,9 @@ public class Application: IDisposable
     private ServiceProvider? _serviceProvider;
 
     private ApplicationLoop _applicationLoop = null!;
+
     private IRenderer _renderer = null!; 
+    private IRenderContext _renderContext = null!;
 
     private CameraEntity _camera = null!;
 
@@ -41,10 +43,9 @@ public class Application: IDisposable
 
         while(_runApplication)
         {
-
             Update(gameTime);
-            BeginDraw();
-            EndDraw();
+            BeginDrawInternal();
+            EndDrawInternal();
         }
 
         _window.Dispose();
@@ -67,6 +68,15 @@ public class Application: IDisposable
 
     }
 
+    virtual protected void BeginDraw(IRenderContext context) 
+    {
+    }
+
+    virtual protected void EndDraw(IRenderContext context)
+    {
+
+    }
+
     private void InitialiseInternal()
     {
         _window.Startup();
@@ -83,6 +93,7 @@ public class Application: IDisposable
 
         _applicationLoop = GetService<ApplicationLoop>();
         _renderer = GetService<IRenderer>();
+        _renderContext = GetService<IRenderContext>();
 
         var plugins = _serviceProvider.GetServices<IPlugin>();
 
@@ -108,20 +119,19 @@ public class Application: IDisposable
         _applicationLoop.Update(gameTime.ElapsedGameTime);
     }
 
-    private bool BeginDraw()
+    private bool BeginDrawInternal()
     {
-        //_camera.SetProjection(bounds.Width, bounds.Height, -1.0f, 1.0f);
-        _camera.SetProjection(1, 1, -1.0f, 1.0f);
-
-        //_renderer.RenderContext.View = _camera.Projection * _camera.View;
-
         _renderer.FrameBegin();
+
+        BeginDraw(_renderContext);
 
         return true;
     }
 
-    private void EndDraw()
+    private void EndDrawInternal()
     {
+        EndDraw(_renderContext);
+
         _renderer.FrameEnd();
     }
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using UO3D.Runtime.Plugin;
-using UO3D.Runtime.Renderer;
+using UO3D.Runtime.RHI;
 
 namespace UO3D.Runtime.SDL3GPU;
 

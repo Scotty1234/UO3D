@@ -1,33 +1,28 @@
 ﻿using static SDL3.SDL;
 
-using UO3D.Runtime.Renderer.Resources;
+using UO3D.Runtime.RHI.Resources;
 
 namespace UO3D.Runtime.SDL3GPU.Resources;
 
-struct ShaderParameters
-{
-    public Dictionary<string, ShaderParameter> Inputs = [];
-
-    public ShaderParameters()
-    {
-
-    }
-}
-
 internal class SDL3GPUShaderInstance: IShaderInstance
 {
-    public readonly ShaderParameters VertexParameters = new();
-    public readonly ShaderParameters PixelParameters = new();
+    public readonly ShaderParameter[] VertexParameters;
+    public readonly ShaderParameter[] PixelParameters;
+
+    public readonly SDL3GPUShaderProgram VertexProgram;
+    public readonly SDL3GPUShaderProgram PixelProgram;
 
     public SDL3GPUShaderInstance(SDL3GPUShaderProgram vertexProgram, SDL3GPUShaderProgram pixelProgram)
     {
-        VertexParameters.Inputs = vertexProgram.Parameters;
-        PixelParameters.Inputs = pixelProgram.Parameters;
+        VertexProgram = vertexProgram;
+        PixelProgram = pixelProgram;
+
+        VertexParameters = [.. vertexProgram.Parameters];
+        PixelParameters = [.. pixelProgram.Parameters];
     }
 
     public void GetVertexParameter(string name)
     {
-
     }
 
     public void SetVertexParameter(string name)

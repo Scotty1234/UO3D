@@ -1,7 +1,7 @@
 ﻿using SDL3;
 
 using UO3D.Runtime.Platform;
-using UO3D.Runtime.Renderer;
+using UO3D.Runtime.RHI;
 
 namespace UO3D.Runtime.SDL3GPU;
 
