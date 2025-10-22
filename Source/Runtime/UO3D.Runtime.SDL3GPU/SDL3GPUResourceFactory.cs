@@ -1,4 +1,5 @@
-﻿using UO3D.Runtime.RHI;
+﻿using System.Diagnostics;
+using UO3D.Runtime.RHI;
 using UO3D.Runtime.RHI.Resources;
 
 using UO3D.Runtime.SDL3GPU.Resources;
@@ -12,6 +13,8 @@ internal class SDL3GPUResourceFactory : IRenderResourceFactory
     public SDL3GPUResourceFactory(IRenderer renderer)
     {
         _device = (renderer as SDL3GPURenderer)!.Device;
+
+        Debug.Assert(_device != IntPtr.Zero);
     }
 
     public IShaderInstance CreateShaderInstance(string vertexShader, string fragmentShader)
@@ -27,9 +30,17 @@ internal class SDL3GPUResourceFactory : IRenderResourceFactory
         return shaderInstance;
     }
 
-    public IRenderTexture CreateTexture(int width, int height)
+    public IRenderTexture CreateTexture(uint width, uint height)
     {
-        throw new NotImplementedException();
+        var texture = new SDL3GPUTexture(_device, new SDL3GPUTextureDescription
+        {
+            Width = width,
+            Height = height
+        });
+
+        texture.Init();
+
+        return texture;
     }
 
     public IGraphicsPipeline CreateGraphicsPipeline(IShaderInstance shaderInstance)

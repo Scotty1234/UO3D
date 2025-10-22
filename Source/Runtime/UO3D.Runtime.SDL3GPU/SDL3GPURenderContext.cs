@@ -10,7 +10,7 @@ namespace UO3D.Runtime.SDL3GPU;
 internal class SDL3GPURenderContext: IRenderContext
 {
     public IntPtr RecordedCommands { get; private set; }
-    public IRenderTexture RenderTarget { get; set; }
+    //public IRenderTexture RenderTarget { get; set; }
     public IShaderInstance ShaderInstance
     {
         get => _shaderInstance;
@@ -44,13 +44,21 @@ internal class SDL3GPURenderContext: IRenderContext
     private IntPtr _renderPass;
     private IShaderInstance _shaderInstance;
     private IGraphicsPipeline _graphicsPipeline;
+    private readonly IntPtr _device;
 
     private bool _stateDirty = true;
     private bool _pipelineDirty = true;
 
-    public void BeginRecording(IntPtr device)
+    public SDL3GPURenderContext(IntPtr device)
     {
-        RecordedCommands = SDL_AcquireGPUCommandBuffer(device);
+        Debug.Assert(device != IntPtr.Zero);
+
+        _device = device;
+    }
+
+    public void BeginRecording()
+    {
+        RecordedCommands = SDL_AcquireGPUCommandBuffer(_device);
 
         Debug.Assert(RecordedCommands != IntPtr.Zero);
     }
@@ -66,7 +74,7 @@ internal class SDL3GPURenderContext: IRenderContext
 
         SDL_GPUColorTargetInfo colourTargetInfo = new()
         {
-            texture = (RenderTarget as SDL3GPUTexture)!.Handle,
+            texture = (renderPassInfo.RenderTarget.Texture as SDL3GPUTexture)!.Handle,
             mip_level = 0,
             layer_or_depth_plane = 0,
             clear_color = new()

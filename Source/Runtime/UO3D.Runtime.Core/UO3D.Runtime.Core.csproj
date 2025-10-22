@@ -20,6 +20,7 @@
 	  <ProjectReference Include="..\UO3D.Runtime.Platform\UO3D.Runtime.Platform.csproj" />
 	  <ProjectReference Include="..\UO3D.Runtime.Plugin\UO3D.Runtime.Plugin.csproj" />
 	  <ProjectReference Include="..\UO3D.Runtime.Renderer\UO3D.Runtime.Renderer.csproj" />
+	  <ProjectReference Include="..\UO3D.Runtime.RHI\UO3D.Runtime.RHI.csproj" />
 	</ItemGroup>
 
 </Project>

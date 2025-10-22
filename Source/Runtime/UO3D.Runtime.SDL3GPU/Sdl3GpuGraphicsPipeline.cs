@@ -19,7 +19,10 @@ internal class Sdl3GpuGraphicsPipeline: IGraphicsPipeline
         VertexProgram = vertexProgram;
         PixelProgram = pixelProgram;
 
-        SDL_GPUColorTargetDescription colourTargetDesc;
+        SDL_GPUColorTargetDescription colourTargetDesc = new SDL_GPUColorTargetDescription
+        {
+            format = SDL_GPUTextureFormat.SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM
+        };
 
         unsafe
         {
@@ -31,8 +34,15 @@ internal class Sdl3GpuGraphicsPipeline: IGraphicsPipeline
                 target_info = new SDL_GPUGraphicsPipelineTargetInfo
                 {
                     color_target_descriptions = &colourTargetDesc,
-                    num_color_targets = 1
+                    num_color_targets = 1,
+                    
+                },
+                rasterizer_state = new SDL_GPURasterizerState
+                {
+                    cull_mode = SDL_GPUCullMode.SDL_GPU_CULLMODE_BACK,
+                    fill_mode = SDL_GPUFillMode.SDL_GPU_FILLMODE_FILL,
                 }
+                
             };
 
             Handle = SDL_CreateGPUGraphicsPipeline(device, ref createInfo);

@@ -24,7 +24,7 @@ internal class SDL3GPUTexture: IRenderTexture, IDisposable
         Description = description;
     }
 
-    public void Init(IntPtr device)
+    public void Init()
     {
         var createInfo = new SDL_GPUTextureCreateInfo()
         {
@@ -37,7 +37,7 @@ internal class SDL3GPUTexture: IRenderTexture, IDisposable
             props = 0
         };
 
-        Handle = SDL_CreateGPUTexture(device, ref createInfo);
+        Handle = SDL_CreateGPUTexture(_device, ref createInfo);
     }
 
     public void InitFromExistingResource(IntPtr _handle)

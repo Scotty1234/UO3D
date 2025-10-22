@@ -1,10 +1,12 @@
-﻿using SDL3;
+﻿using static SDL3.SDL;
 using UO3D.Runtime.Platform;
 
 namespace UO3D.Runtime.Core;
 
 public class Window: IWindow
 {
+    public event Action<IWindow>? OnResized;
+
     public IntPtr Handle { get; private set; }
 
     public uint Width { get; private set; }
@@ -12,23 +14,23 @@ public class Window: IWindow
 
     public void Startup()
     {
-        if (!SDL.SDL_Init(SDL.SDL_InitFlags.SDL_INIT_VIDEO))
+        if (!SDL_Init(SDL_InitFlags.SDL_INIT_VIDEO))
         {
-            throw new Exception("SDL_Init failed: " + SDL.SDL_GetError());
+            throw new Exception("SDL_Init failed: " + SDL_GetError());
         }
 
         string title = "UO3D";
 
-        SDL.SDL_WindowFlags initFlags = SDL.SDL_WindowFlags.SDL_WINDOW_RESIZABLE;
+        SDL_WindowFlags initFlags = SDL_WindowFlags.SDL_WINDOW_RESIZABLE;
 
         Width = 1920;
         Height = 1080;
 
-        Handle = SDL.SDL_CreateWindow(title, (int)Width, (int)Height, initFlags);
+        Handle = SDL_CreateWindow(title, (int)Width, (int)Height, initFlags);
 
         if (Handle == IntPtr.Zero)
         {
-            throw new Exception("SDL_CreateWindow failed: " + SDL.SDL_GetError());
+            throw new Exception("SDL_CreateWindow failed: " + SDL_GetError());
         }
 
         // Win32 handle if needed
@@ -38,16 +40,26 @@ public class Window: IWindow
 
     public bool PollEvents()
     {
-        SDL.SDL_Event evt;
+        SDL_Event evt;
 
-        while (SDL.SDL_PollEvent(out evt))
+        while (SDL_PollEvent(out evt))
         {
-            switch ((SDL.SDL_EventType)evt.type)
+            switch ((SDL_EventType)evt.type)
             {
-                case SDL.SDL_EventType.SDL_EVENT_QUIT:
+                case SDL_EventType.SDL_EVENT_QUIT:
                     {
                         return true;
                     }
+
+                case SDL_EventType.SDL_EVENT_WINDOW_RESIZED:
+                    {
+                        Width = (uint)evt.window.data1;
+                        Height = (uint)evt.window.data2;
+
+                        OnResized?.Invoke(this);
+
+                    }
+                    break;
 
                 default:
                     break;
@@ -59,7 +71,7 @@ public class Window: IWindow
 
     public void Dispose()
     {
-        SDL.SDL_DestroyWindow(Handle);
-        SDL.SDL_QuitSubSystem(SDL.SDL_InitFlags.SDL_INIT_VIDEO);
+        SDL_DestroyWindow(Handle);
+        SDL_QuitSubSystem(SDL_InitFlags.SDL_INIT_VIDEO);
     }
 }

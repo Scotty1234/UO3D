@@ -7,12 +7,8 @@ namespace UO3D.Runtime.SDL3GPU;
 
 public class SDL3GPURenderer : IRenderer
 {
-    public event Action<IRenderContext>? OnFrameBegin;
-    public event Action<IRenderContext>? OnFrameEnd;
-
     public IntPtr Device { get; private set; }
 
-    private readonly SDL3GPURenderContext _context = new();
     private readonly IWindow _window;
 
     private SDL3GPUSwapChain _swapChain;
@@ -46,22 +42,8 @@ public class SDL3GPURenderer : IRenderer
         SDL.SDL_DestroyGPUDevice(Device);
     }
 
-    public void FrameBegin()
+    public IRenderContext CreateRenderContext()
     {
-        _context.BeginRecording(Device);
-
-        _swapChain.Acquire(_context);
-
-        _context.BeginRenderPass(new RenderPassInfo());
-
-        OnFrameBegin?.Invoke(_context);
-    }
-
-    public void FrameEnd()
-    {
-        OnFrameEnd?.Invoke(_context);
-
-        _context.EndRenderPass();
-        _context.EndRecording();
+        return new SDL3GPURenderContext(Device);
     }
 }

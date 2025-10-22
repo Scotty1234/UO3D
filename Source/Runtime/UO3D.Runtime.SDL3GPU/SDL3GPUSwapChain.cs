@@ -30,7 +30,5 @@ internal class SDL3GPUSwapChain
         });
 
         renderTarget.InitFromExistingResource(_backbufferToRenderInto);
-
-        context.RenderTarget = renderTarget;
     }
 }

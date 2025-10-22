@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\ThirdParty\FNA\FNA.Core.csproj" />
     <ProjectReference Include="..\UO3D.Runtime.Plugin\UO3D.Runtime.Plugin.csproj" />
+    <ProjectReference Include="..\UO3D.Runtime.RHI\UO3D.Runtime.RHI.csproj" />
   </ItemGroup>
 
 </Project>

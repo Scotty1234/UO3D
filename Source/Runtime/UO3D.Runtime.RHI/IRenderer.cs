@@ -2,10 +2,12 @@
 
 public interface IRenderer
 {
-    public event Action<IRenderContext>? OnFrameBegin;
-    public event Action<IRenderContext>? OnFrameEnd;
+    //public event Action<IRenderContext>? OnFrameBegin;
+    //public event Action<IRenderContext>? OnFrameEnd;
 
-    public void FrameBegin();
+    //public void FrameBegin();
 
-    public void FrameEnd();
+    //public void FrameEnd();
+
+    public IRenderContext CreateRenderContext();
 }

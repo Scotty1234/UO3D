@@ -1,6 +1,6 @@
 ﻿using UO3D.Runtime.Core;
-using UO3D.Runtime.Renderer;
-using UO3D.Runtime.Renderer.Resources;
+using UO3D.Runtime.RHI;
+using UO3D.Runtime.RHI.Resources;
 
 namespace UO3D;
 

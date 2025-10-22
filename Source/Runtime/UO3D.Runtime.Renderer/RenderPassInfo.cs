@@ -1,8 +1,1 @@
-﻿using UO3D.Runtime.Renderer.Resources;
-
-namespace UO3D.Runtime.Renderer;
-
-public struct RenderPassInfo
-{
-    public IRenderTexture RenderTarget;
-}
+﻿

@@ -4,7 +4,7 @@ namespace UO3D.Runtime.RHI;
 
 public interface IRenderResourceFactory
 {
-    public IRenderTexture CreateTexture(int width, int height);
+    public IRenderTexture CreateTexture(uint width, uint height);
 
     public IShaderInstance CreateShaderInstance(string vertexShader, string fragmentShader);
 

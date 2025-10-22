@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using UO3D.Runtime.Platform;
 using UO3D.Runtime.Plugin;
 using UO3D.Runtime.Renderer;
+using UO3D.Runtime.RHI;
 
 namespace UO3D.Runtime.Core;
 
@@ -20,8 +21,7 @@ public class Application: IDisposable
 
     private ApplicationLoop _applicationLoop = null!;
 
-    private IRenderer _renderer = null!; 
-    private IRenderContext _renderContext = null!;
+    private RenderSystem _renderSystem = null!; 
 
     private CameraEntity _camera = null!;
 
@@ -41,11 +41,11 @@ public class Application: IDisposable
 
         GameTime gameTime = new GameTime();
 
-        while(_runApplication)
+        while (_runApplication)
         {
             Update(gameTime);
-            BeginDrawInternal();
-            EndDrawInternal();
+            _renderSystem.FrameBegin();
+            _renderSystem.FrameEnd();
         }
 
         _window.Dispose();
@@ -92,8 +92,7 @@ public class Application: IDisposable
         _serviceProvider = _services.BuildServiceProvider();
 
         _applicationLoop = GetService<ApplicationLoop>();
-        _renderer = GetService<IRenderer>();
-        _renderContext = GetService<IRenderContext>();
+        _renderSystem = GetService<RenderSystem>();
 
         var plugins = _serviceProvider.GetServices<IPlugin>();
 
@@ -102,9 +101,22 @@ public class Application: IDisposable
             plugin.Startup();
         }
 
+        foreach (var plugin in plugins)
+        {
+            plugin.PostStartup();
+        }
+
         var entityManager = GetService<EntityManager>();
 
         _camera = entityManager.NewEntity<CameraEntity>();
+
+        _renderSystem.OnFrameBegin += BeginDraw;
+        _renderSystem.OnFrameEnd += EndDraw;
+
+        _window.OnResized += (window) =>
+        {
+            _renderSystem.ResizeSwapchain(window.Width, window.Height);
+        };
     }
 
     private void Update(GameTime gameTime)
@@ -117,22 +129,6 @@ public class Application: IDisposable
         }
 
         _applicationLoop.Update(gameTime.ElapsedGameTime);
-    }
-
-    private bool BeginDrawInternal()
-    {
-        _renderer.FrameBegin();
-
-        BeginDraw(_renderContext);
-
-        return true;
-    }
-
-    private void EndDrawInternal()
-    {
-        EndDraw(_renderContext);
-
-        _renderer.FrameEnd();
     }
 
     private void LoadPlugins(string directory, bool recurse = false)
