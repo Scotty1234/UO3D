@@ -1,49 +1,43 @@
-﻿using SDL3;
-
-using UO3D.Runtime.Platform;
+﻿using UO3D.Runtime.Platform;
 using UO3D.Runtime.RHI;
+using UO3D.Runtime.RHI.Resources;
+using static SDL3.SDL;
 
 namespace UO3D.Runtime.SDL3GPU;
 
-public class SDL3GPURenderer : IRenderer
+internal class SDL3GPURenderer : IRenderer
 {
-    public IntPtr Device { get; private set; }
+    public IRenderSwapChain SwapChain { get; private set; }
 
     private readonly IWindow _window;
 
-    private SDL3GPUSwapChain _swapChain;
+    private readonly Sdl3GpuDevice _device;
 
-    public SDL3GPURenderer(IWindow window)
+    public SDL3GPURenderer(IWindow window, Sdl3GpuDevice device)
     {
         _window = window;
+        _device = device;
     }
 
     public void Startup()
     {
-        SDL.SDL_GPUShaderFormat flags = SDL.SDL_GPUShaderFormat.SDL_GPU_SHADERFORMAT_DXIL;
+        _device.Setup();
 
-        Device = SDL.SDL_CreateGPUDevice(flags, true, null);
-
-        if(Device == IntPtr.Zero)
-        {
-            throw new Exception("Failed to initialise GPU device.");
-        }
-
-       if(SDL.SDL_ClaimWindowForGPUDevice(Device, _window.Handle) == false)
+       if(SDL_ClaimWindowForGPUDevice(_device.Handle, _window.Handle) == false)
        {
             throw new Exception("Failed to claim window for GPU device.");
        }
 
-       _swapChain = new SDL3GPUSwapChain(Device, _window.Handle);
+        SwapChain = new SDL3GPUSwapChain(_device, _window.Handle);
     }
 
     public void Shutdown()
     {
-        SDL.SDL_DestroyGPUDevice(Device);
+        SDL_DestroyGPUDevice(_device.Handle);
     }
 
     public IRenderContext CreateRenderContext()
     {
-        return new SDL3GPURenderContext(Device);
+        return new SDL3GPURenderContext(_device);
     }
 }

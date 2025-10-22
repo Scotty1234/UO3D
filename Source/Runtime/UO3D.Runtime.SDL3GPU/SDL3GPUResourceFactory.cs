@@ -8,13 +8,12 @@ namespace UO3D.Runtime.SDL3GPU;
 
 internal class SDL3GPUResourceFactory : IRenderResourceFactory
 {
-    private readonly IntPtr _device;
+    //private readonly IntPtr _device;
+    private readonly Sdl3GpuDevice _device;
 
-    public SDL3GPUResourceFactory(IRenderer renderer)
+    public SDL3GPUResourceFactory(Sdl3GpuDevice device)
     {
-        _device = (renderer as SDL3GPURenderer)!.Device;
-
-        Debug.Assert(_device != IntPtr.Zero);
+        _device = device;
     }
 
     public IShaderInstance CreateShaderInstance(string vertexShader, string fragmentShader)
@@ -35,7 +34,8 @@ internal class SDL3GPUResourceFactory : IRenderResourceFactory
         var texture = new SDL3GPUTexture(_device, new SDL3GPUTextureDescription
         {
             Width = width,
-            Height = height
+            Height = height,
+            Usage = SDL3.SDL.SDL_GPUTextureUsageFlags.SDL_GPU_TEXTUREUSAGE_COLOR_TARGET
         });
 
         texture.Init();

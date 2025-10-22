@@ -5,4 +5,5 @@ namespace UO3D.Runtime.RHI;
 public struct RenderPassInfo
 {
     public RenderTarget RenderTarget;
+    public string Name;
 }

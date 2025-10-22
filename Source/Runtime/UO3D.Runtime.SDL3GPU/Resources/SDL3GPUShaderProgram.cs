@@ -5,17 +5,15 @@ using static SDL3.SDL;
 
 namespace UO3D.Runtime.SDL3GPU.Resources;
 
-internal class SDL3GPUShaderProgram
+internal class SDL3GPUShaderProgram: Sdl3GpuResource
 {
     public readonly ShaderProgramType Type;
-    public readonly IntPtr Handle;
 
     public readonly List<ShaderParameter> Parameters = [];
 
-    public SDL3GPUShaderProgram(IntPtr device, ShaderProgramType type, in ShaderProgramCompileResult compileResult)
+    public SDL3GPUShaderProgram(Sdl3GpuDevice device, ShaderProgramType type, in ShaderProgramCompileResult compileResult)
+        : base(device)
     {
-        Debug.Assert(device != IntPtr.Zero);
-
         Type = type;
 
         SDL_GPUShaderStage stage = SDL_GPUShaderStage.SDL_GPU_SHADERSTAGE_VERTEX;
@@ -44,7 +42,7 @@ internal class SDL3GPUShaderProgram
                     format = SDL_GPUShaderFormat.SDL_GPU_SHADERFORMAT_DXIL,
                 };
 
-                Handle = SDL_CreateGPUShader(device, ref createInfo);
+                Handle = SDL_CreateGPUShader(Device.Handle, ref createInfo);
             }
         }
 
@@ -54,5 +52,10 @@ internal class SDL3GPUShaderProgram
         {
             Parameters.Add(input);
         }
+    }
+
+    protected override void FreeResource()
+    {
+        SDL_ReleaseGPUShader(Device.Handle, Handle);
     }
 }

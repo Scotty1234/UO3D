@@ -9,37 +9,42 @@ public class RenderSystem
     public event Action<IRenderContext>? OnFrameBegin;
     public event Action<IRenderContext>? OnFrameEnd;
 
-    public readonly RenderTarget GBufferDiffuse = new();
+    public RenderTarget GBufferDiffuse;
 
     private IRenderContext _context = null!;
-    private readonly IRenderer _rhiRenderer = null!;
+    private readonly IRenderer _rhiRenderer;
     private readonly IRenderResourceFactory _resourceFactory;
+
+    private RenderPassInfo _mainPass;
+
+    private uint _frameNumber = 0;
 
     public RenderSystem(IRenderer rhiRenderer, IRenderResourceFactory resourceFactory)
     {
         _rhiRenderer = rhiRenderer;
         _resourceFactory = resourceFactory;
+
+        _mainPass = new RenderPassInfo
+        {
+            RenderTarget = GBufferDiffuse,
+            Name = "MainPass"
+        };
     }
 
     public void Startup()
     {
         _context = _rhiRenderer.CreateRenderContext();
-        var gBufferTexture = _resourceFactory.CreateTexture(1920, 1080);
-
-        GBufferDiffuse.Setup(gBufferTexture);
-
     }
 
     public void FrameBegin()
     {
         _context.BeginRecording();
 
-        //_swapChain.Acquire(_context);
+        GBufferDiffuse = _rhiRenderer.SwapChain.Acquire(_context);
 
-        _context.BeginRenderPass(new RenderPassInfo
-        {
-            RenderTarget = GBufferDiffuse,
-        });
+        _mainPass.RenderTarget = GBufferDiffuse;
+
+        _context.BeginRenderPass(_mainPass);
 
         OnFrameBegin?.Invoke(_context);
     }
@@ -50,6 +55,8 @@ public class RenderSystem
 
         _context.EndRenderPass();
         _context.EndRecording();
+
+        _frameNumber++;
     }
 
     public void ResizeSwapchain(uint width,  uint height)

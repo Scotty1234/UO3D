@@ -1,10 +1,9 @@
-﻿using static SDL3.SDL;
-
-namespace UO3D.Runtime.SDL3GPU.Resources;
+﻿namespace UO3D.Runtime.SDL3GPU.Resources;
 
 internal abstract class Sdl3GpuResource : IDisposable
 {
     public IntPtr Handle { get; protected set; }
+   
 
     public string Name
     {
@@ -13,28 +12,22 @@ internal abstract class Sdl3GpuResource : IDisposable
         {
             _name = value;
 
-            _setNameFunc(Handle, Handle, _name);
+            (_setNameFunc ?? throw new Exception("_setNameFunc not set"))(Handle, Handle, _name);
         }
     }
 
-    protected IntPtr Device { get; private set; }
+    public readonly Sdl3GpuDevice Device;
+
+    private readonly Action<IntPtr, IntPtr, string>? _setNameFunc;
 
     private bool _disposed;
-    private readonly Action<IntPtr> _destroyFunc;
-    private readonly Action<IntPtr, IntPtr, string> _setNameFunc;
-
     private string _name = "";
 
-
-    protected Sdl3GpuResource(IntPtr device, Action<IntPtr> destroyFunc, Action<IntPtr, IntPtr, string> setNameFunc, string? debugName = null)
+    protected Sdl3GpuResource(Sdl3GpuDevice device, Action<IntPtr, IntPtr, string>? setNameFunc = null, string? debugName = null)
     {
-        if (device == IntPtr.Zero)
-            throw new ArgumentException("Device object handle cannot be null.");
-
         Device = device;
 
-        _destroyFunc = destroyFunc ?? throw new ArgumentNullException(nameof(destroyFunc));
-        _setNameFunc = setNameFunc ?? throw new ArgumentNullException(nameof(setNameFunc));
+        _setNameFunc = setNameFunc;
 
         if (debugName != null)
         {
@@ -48,6 +41,8 @@ internal abstract class Sdl3GpuResource : IDisposable
         GC.SuppressFinalize(this);
     }
 
+    protected abstract void FreeResource();
+
     protected virtual void Dispose(bool disposing)
     {
         if (_disposed)
@@ -59,7 +54,7 @@ internal abstract class Sdl3GpuResource : IDisposable
 
         if (Handle != IntPtr.Zero)
         {
-            _destroyFunc(Handle);
+            FreeResource();
 
             Handle = IntPtr.Zero;
         }

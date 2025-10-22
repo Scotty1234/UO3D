@@ -24,19 +24,10 @@ internal class UO3DApplication: Application
 
     protected override void BeginDraw(IRenderContext context)
     {
-        var renderPassInfo = new RenderPassInfo
-        {
-            RenderTarget = null
-        };
-
-        context.BeginRenderPass(renderPassInfo);
-
         context.ShaderInstance = _shaderInstance;
         context.GraphicsPipline = _pipeline;
 
         context.DrawIndexedPrimitives(1);
-
-        context.EndRenderPass();
     }
 
 }

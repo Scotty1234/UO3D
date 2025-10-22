@@ -1,13 +1,11 @@
-﻿namespace UO3D.Runtime.RHI;
+﻿using UO3D.Runtime.RHI.Resources;
+
+namespace UO3D.Runtime.RHI;
 
 public interface IRenderer
 {
-    //public event Action<IRenderContext>? OnFrameBegin;
-    //public event Action<IRenderContext>? OnFrameEnd;
-
-    //public void FrameBegin();
-
-    //public void FrameEnd();
+    public IRenderSwapChain SwapChain { get; }
 
     public IRenderContext CreateRenderContext();
+
 }

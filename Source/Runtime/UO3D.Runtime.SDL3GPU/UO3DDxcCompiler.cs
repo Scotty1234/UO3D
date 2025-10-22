@@ -5,6 +5,7 @@ using Vortice.Direct3D12.Shader;
 
 namespace UO3D.Runtime.SDL3GPU;
 
+[DebuggerDisplay("{Name}, {Register}")]
 struct ShaderParameter
 {
     public string Name;

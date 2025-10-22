@@ -14,14 +14,14 @@ internal class Sdl3GpuGraphicsPipeline: IGraphicsPipeline
     public readonly SDL3GPUShaderProgram VertexProgram;
     public readonly SDL3GPUShaderProgram PixelProgram;
 
-    public Sdl3GpuGraphicsPipeline(IntPtr device, SDL3GPUShaderProgram vertexProgram, SDL3GPUShaderProgram pixelProgram)
+    public Sdl3GpuGraphicsPipeline(Sdl3GpuDevice device, SDL3GPUShaderProgram vertexProgram, SDL3GPUShaderProgram pixelProgram)
     {
         VertexProgram = vertexProgram;
         PixelProgram = pixelProgram;
 
         SDL_GPUColorTargetDescription colourTargetDesc = new SDL_GPUColorTargetDescription
         {
-            format = SDL_GPUTextureFormat.SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM
+            format = SDL_GPUTextureFormat.SDL_GPU_TEXTUREFORMAT_B8G8R8A8_UNORM
         };
 
         unsafe
@@ -45,7 +45,7 @@ internal class Sdl3GpuGraphicsPipeline: IGraphicsPipeline
                 
             };
 
-            Handle = SDL_CreateGPUGraphicsPipeline(device, ref createInfo);
+            Handle = SDL_CreateGPUGraphicsPipeline(device.Handle, ref createInfo);
         }
 
         Debug.Assert(Handle != IntPtr.Zero);

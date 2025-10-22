@@ -10,7 +10,7 @@ namespace UO3D.Runtime.SDL3GPU;
 internal class SDL3GPURenderContext: IRenderContext
 {
     public IntPtr RecordedCommands { get; private set; }
-    //public IRenderTexture RenderTarget { get; set; }
+
     public IShaderInstance ShaderInstance
     {
         get => _shaderInstance;
@@ -36,29 +36,39 @@ internal class SDL3GPURenderContext: IRenderContext
                 return;
             }
 
-            _graphicsPipeline = value;
+            _graphicsPipeline = value as Sdl3GpuGraphicsPipeline?? throw new Exception("Wrong type of graphics pipeline");
             _pipelineDirty = true;
         }
     }
 
     private IntPtr _renderPass;
     private IShaderInstance _shaderInstance;
-    private IGraphicsPipeline _graphicsPipeline;
-    private readonly IntPtr _device;
+    private Sdl3GpuGraphicsPipeline? _graphicsPipeline;
+    private readonly Sdl3GpuDevice _device;
 
     private bool _stateDirty = true;
     private bool _pipelineDirty = true;
 
-    public SDL3GPURenderContext(IntPtr device)
-    {
-        Debug.Assert(device != IntPtr.Zero);
+    private RenderPassInfo? _activeRenderPass;
 
+    private Sdl3GpuBuffer<ushort> _indexBuffer;
+
+    public SDL3GPURenderContext(Sdl3GpuDevice device)
+    {
         _device = device;
+
+        ushort[] drawIndices = [ 0, 1, 2 ];
+
+        _indexBuffer = new Sdl3GpuBuffer<ushort>(device, RenderBufferType.Index, drawIndices);
     }
 
     public void BeginRecording()
     {
-        RecordedCommands = SDL_AcquireGPUCommandBuffer(_device);
+        RecordedCommands = SDL_AcquireGPUCommandBuffer(_device.Handle);
+
+        _graphicsPipeline = null;
+        _activeRenderPass = null;
+        _pipelineDirty = true;
 
         Debug.Assert(RecordedCommands != IntPtr.Zero);
     }
@@ -72,17 +82,21 @@ internal class SDL3GPURenderContext: IRenderContext
     {
         Debug.Assert(_renderPass ==  IntPtr.Zero);
 
+        _activeRenderPass = renderPassInfo;
+
         SDL_GPUColorTargetInfo colourTargetInfo = new()
         {
             texture = (renderPassInfo.RenderTarget.Texture as SDL3GPUTexture)!.Handle,
             mip_level = 0,
             layer_or_depth_plane = 0,
+            // Note must always clear to 0 otherwise SDK layer complains.
+            // Okay for now as usually do not need a clear colour other than "empty".
             clear_color = new()
             {
-                r = 1.0f,
+                r = 0.0f,
                 g = 0.0f, 
                 b = 0.0f,
-                a = 1.0f
+                a = 0.0f
             },
             load_op = SDL_GPULoadOp.SDL_GPU_LOADOP_CLEAR,
             store_op = SDL_GPUStoreOp.SDL_GPU_STOREOP_STORE,
@@ -91,7 +105,7 @@ internal class SDL3GPURenderContext: IRenderContext
             cycle = false,
             cycle_resolve_texture = false,
         };
-
+        
         SDL_GPUDepthStencilTargetInfo depthTargetInfo = default;
 
         // Note I changed the SDL binding here to ignore depth for now.
@@ -99,6 +113,7 @@ internal class SDL3GPURenderContext: IRenderContext
 
         Debug.Assert(_renderPass != IntPtr.Zero);
 
+        _indexBuffer.Bind(_renderPass);
     }
 
     public void EndRenderPass()
@@ -108,15 +123,18 @@ internal class SDL3GPURenderContext: IRenderContext
         SDL_EndGPURenderPass(_renderPass);
 
         _renderPass = IntPtr.Zero;
+        _activeRenderPass = null;
     }
 
     public void DrawIndexedPrimitives(uint numInstances)
     {
-        if(_stateDirty)
+        if(_pipelineDirty)
         {
-            _stateDirty = false;
-        }
+            SDL_BindGPUGraphicsPipeline(_renderPass, _graphicsPipeline.Handle);
 
-        SDL_DrawGPUIndexedPrimitives(_renderPass, 6, numInstances, 0, 0, 0);
+            _pipelineDirty = false;
+        }
+        
+        SDL_DrawGPUIndexedPrimitives(_renderPass, _indexBuffer.Length, numInstances, 0, 0, 0);
     }
 }
