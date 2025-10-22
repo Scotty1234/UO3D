@@ -1,5 +1,6 @@
-﻿using UO3D.Runtime.RHI.Resources;
-using static SDL3.SDL;
+﻿using static SDL3.SDL;
+
+using UO3D.Runtime.RHI.Resources;
 
 namespace UO3D.Runtime.SDL3GPU.Resources;
 
@@ -7,20 +8,17 @@ internal struct SDL3GPUTextureDescription
 {
     public uint Width;
     public uint Height;
-    public SDL_GPUTextureUsageFlags Usage; 
+    public SDL_GPUTextureUsageFlags Usage;
+    public string Name;
 }
 
-internal class SDL3GPUTexture: IRenderTexture, IDisposable
+internal class SDL3GPUTexture: Sdl3GpuResource, IRenderTexture
 {
     public readonly SDL3GPUTextureDescription Description;
 
-    public IntPtr Handle { get; private set; }
-
-    private readonly IntPtr _device;
-
     public SDL3GPUTexture(IntPtr device, in SDL3GPUTextureDescription description)
+        : base(device, SDL_DestroyTexture, SDL_SetGPUTextureName, description.Name)
     {
-        _device = device;
         Description = description;
     }
 
@@ -37,18 +35,11 @@ internal class SDL3GPUTexture: IRenderTexture, IDisposable
             props = 0
         };
 
-        Handle = SDL_CreateGPUTexture(_device, ref createInfo);
+        Handle = SDL_CreateGPUTexture(Device, ref createInfo);
     }
 
     public void InitFromExistingResource(IntPtr _handle)
     {
         Handle = _handle;
-    }
-
-    public void Dispose()
-    {
-        SDL_ReleaseGPUTexture(_device, Handle);
-
-        Handle = IntPtr.Zero;
     }
 }

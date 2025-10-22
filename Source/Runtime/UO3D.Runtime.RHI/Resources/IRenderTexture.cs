@@ -2,4 +2,5 @@
 
 public interface IRenderTexture
 {
+    public string Name { get; set; }
 }
