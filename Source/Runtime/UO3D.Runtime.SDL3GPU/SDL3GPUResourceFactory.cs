@@ -43,16 +43,16 @@ internal class SDL3GPUResourceFactory : IRenderResourceFactory
         return texture;
     }
 
-    public IGraphicsPipeline CreateGraphicsPipeline(IShaderInstance shaderInstance)
+    public IGraphicsPipeline CreateGraphicsPipeline(IShaderInstance shaderInstance, string name)
     {
         SDL3GPUShaderInstance sdl3GpuShaderInstance = (shaderInstance as SDL3GPUShaderInstance)!;
 
-        var pipeline = new Sdl3GpuGraphicsPipeline(_device, sdl3GpuShaderInstance.VertexProgram, sdl3GpuShaderInstance.PixelProgram);
+        var pipeline = new Sdl3GpuGraphicsPipeline(_device, sdl3GpuShaderInstance.VertexProgram, sdl3GpuShaderInstance.PixelProgram, name);
 
         return pipeline;
     }
 
-    public IRenderIndexBuffer CreateIndexBuffer(uint length, string? name = "")
+    public IRenderIndexBuffer CreateIndexBuffer(uint length, string name)
     {
         var indexBuffer = new Sdl3GpuIndexBuffer(_device, length, name);
 

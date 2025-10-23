@@ -36,9 +36,9 @@ public class RenderSystem
     public void Startup()
     {
         _context = _rhiRenderer.CreateRenderContext();
-        _indexBuffer = _resourceFactory.CreateIndexBuffer(3, "MainIndexBuffer");
+        _indexBuffer = _resourceFactory.CreateIndexBuffer(6, "MainIndexBuffer");
 
-        _indexBuffer.SetData([1, 2, 3]);
+        _indexBuffer.SetData([0, 1, 2, 0, 2, 3]);
 
         _indexBuffer.Upload();
     }

@@ -1,4 +1,19 @@
-﻿namespace UO3D.Runtime.SDL3GPU.Resources;
+﻿using static SDL3.SDL;
+
+namespace UO3D.Runtime.SDL3GPU.Resources;
+
+
+internal readonly struct Sdl3GpuResourceProperty
+{
+    public readonly uint Id;
+    public readonly string Value;
+
+    public Sdl3GpuResourceProperty(uint id, string value)
+    {
+        Id = id;
+        Value = value;
+    }
+}
 
 internal abstract class Sdl3GpuResource : IDisposable
 {
@@ -22,6 +37,8 @@ internal abstract class Sdl3GpuResource : IDisposable
 
     private bool _disposed;
     private string _name = "";
+
+    private Dictionary<string, Sdl3GpuResourceProperty> _properties = [];
 
     protected Sdl3GpuResource(Sdl3GpuDevice device, Action<IntPtr, IntPtr, string>? setNameFunc = null, string? debugName = null)
     {
@@ -50,7 +67,13 @@ internal abstract class Sdl3GpuResource : IDisposable
             return;
         }
 
-        _disposed = true;
+        foreach (var property in _properties)
+        {
+            string name = property.Key;
+            Sdl3GpuResourceProperty prop = property.Value;
+
+            SDL_ClearProperty(prop.Id, name);
+        }
 
         if (Handle != IntPtr.Zero)
         {
@@ -58,6 +81,19 @@ internal abstract class Sdl3GpuResource : IDisposable
 
             Handle = IntPtr.Zero;
         }
+
+        _disposed = true;
+    }
+
+    protected uint CreateProperty(string name, string value)
+    {
+        uint prop = SDL_CreateProperties();
+
+        SDL_SetStringProperty(prop, name, value);
+
+        _properties.Add(name, new Sdl3GpuResourceProperty(prop, value));
+
+        return prop;
     }
 
     ~Sdl3GpuResource()

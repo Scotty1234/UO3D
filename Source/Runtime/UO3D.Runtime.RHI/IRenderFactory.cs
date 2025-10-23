@@ -8,7 +8,7 @@ public interface IRenderResourceFactory
 
     public IShaderInstance CreateShaderInstance(string vertexShader, string fragmentShader);
 
-    public IGraphicsPipeline CreateGraphicsPipeline(IShaderInstance shaderInstance);
+    public IGraphicsPipeline CreateGraphicsPipeline(IShaderInstance shaderInstance, string name);
 
-    public IRenderIndexBuffer CreateIndexBuffer(uint length, string? name = "");
+    public IRenderIndexBuffer CreateIndexBuffer(uint length, string name);
 }

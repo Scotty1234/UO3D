@@ -18,7 +18,7 @@ internal class UO3DApplication: Application
 
         _shaderInstance = renderFactory.CreateShaderInstance(vertexShader, pixelShader);
 
-        _pipeline = renderFactory.CreateGraphicsPipeline(_shaderInstance);
+        _pipeline = renderFactory.CreateGraphicsPipeline(_shaderInstance, "TestPipeline");
 
     }
 

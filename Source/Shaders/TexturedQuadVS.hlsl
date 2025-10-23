@@ -11,10 +11,10 @@ static const float height = 1.0f;//44.0;
 
 static const float4 cQuadVertsNDC[4] =
 {
-    { width,   0.0,  0.0, 1.0},
     {   0.0,   0.0,  0.0, 1.0},
-    { width, width,  0.0, 1.0},
     {   0.0, width,  0.0, 1.0},
+    { width, width,  0.0, 1.0},
+    { width,   0.0,  0.0, 1.0},
 };
 
 static const float2 cQuadUVs[4] =
