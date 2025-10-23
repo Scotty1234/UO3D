@@ -1,73 +1,121 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
-using UO3D.Runtime.RHI.Resources;
 using static SDL3.SDL;
 
-namespace UO3D.Runtime.SDL3GPU.Resources
+using UO3D.Runtime.RHI.Resources;
+
+namespace UO3D.Runtime.SDL3GPU.Resources;
+
+internal class Sdl3GpuBuffer<T>: Sdl3GpuResource
 {
-    internal class Sdl3GpuBuffer<T>
+    public readonly RenderBufferType Type;
+    public readonly T[] Data;
+
+    private readonly SDL_GPUBufferCreateInfo _description;
+    private SDL_GPUBufferBinding _bufferBinding = new();
+
+    private readonly Sdl3GpuDevice _device;
+
+    public Sdl3GpuBuffer(Sdl3GpuDevice device, RenderBufferType type, uint length, string name = "")
+        : base(device, SDL_SetGPUBufferName, name)
     {
-        public readonly RenderBufferType Type;
+        // SDL_SetGPUBufferName seems to not be set in the .c.
+        Type = type;
+        _device = device;
 
-        public uint Length { get; private set; }
-
-        private readonly SDL_GPUBufferCreateInfo _description;
-        private SDL_GPUBufferBinding _bufferBinding = new();
-
-        private readonly Sdl3GpuDevice _device;
-
-        public Sdl3GpuBuffer(Sdl3GpuDevice device, RenderBufferType type, T[] data) 
+        switch (type)
         {
-            Type = type;
-            _device = device;
+            case RenderBufferType.Index:
+                {
+                    _description.usage = SDL_GPUBufferUsageFlags.SDL_GPU_BUFFERUSAGE_INDEX;
+                    break;
+                }
 
-            switch (type)
+            default:
+                {
+                    Debug.Assert(false);
+                    break;
+                }
+        }
+
+        _description.size = (uint)(length * Marshal.SizeOf<T>());
+
+        Handle = SDL_CreateGPUBuffer(device.Handle, ref _description);
+
+        _bufferBinding.buffer = Handle;
+
+        Data = new T[length];
+    }
+
+    public void Upload()
+    {
+        // Eventually we will want a ring buffer to submit to in batches, but quick and easy for now...
+        var createInfo = new SDL_GPUTransferBufferCreateInfo
+        {
+            size = _description.size,
+            usage = SDL_GPUTransferBufferUsage.SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD
+        };
+
+        IntPtr transferBuffer = SDL_CreateGPUTransferBuffer(_device.Handle, ref createInfo);
+
+        IntPtr mappedMemory = SDL_MapGPUTransferBuffer(Device.Handle, transferBuffer, false);
+
+        unsafe
+        {
+            fixed (void* src = Data)
             {
-                case RenderBufferType.Index:
-                    {
-                        _description.usage = SDL_GPUBufferUsageFlags.SDL_GPU_BUFFERUSAGE_INDEX;
-                        break;
-                    }
-
-                default:
-                    {
-                        Debug.Assert(false);
-                        break;
-                    }
+                Buffer.MemoryCopy(src, (void*)mappedMemory, _description.size, _description.size);
             }
+        }
 
-            _description.size = (uint)(data.Length * Marshal.SizeOf<T>());
+        SDL_UnmapGPUTransferBuffer(Device.Handle, mappedMemory);
 
-            _bufferBinding.buffer = SDL_CreateGPUBuffer(device.Handle, ref _description);
+        IntPtr commandBuffer = SDL_AcquireGPUCommandBuffer(Device.Handle);
+        IntPtr copyPass = SDL_BeginGPUCopyPass(commandBuffer);
+
+        SDL_GPUTransferBufferLocation location = new SDL_GPUTransferBufferLocation
+        {
+            transfer_buffer = transferBuffer,
             
-            Length = (uint)data.Length;
-        }
+            offset = 0
+        };
 
-        public void Upload()
+        var region = new SDL_GPUBufferRegion
         {
-            var createInfo = new SDL_GPUTransferBufferCreateInfo
-            {
+            buffer = Handle,
+            offset = 0,
+            size = _description.size
+        };
 
-            };
+        SDL_UploadToGPUBuffer(copyPass, ref location, ref region, false);
 
-            IntPtr uploadBuffer = SDL_CreateGPUTransferBuffer(_device.Handle, ref createInfo);
-        }
+        SDL_EndGPUCopyPass(copyPass);
+        SDL_SubmitGPUCommandBuffer(commandBuffer);
 
-        public void Bind(IntPtr renderPassHandle)
+        SDL_ReleaseGPUTransferBuffer(Device.Handle, transferBuffer);
+    }
+
+    public void Bind(IntPtr renderPassHandle)
+    {
+        switch (Type)
         {
-            switch (Type)
-            {
-                case RenderBufferType.Index:
-                    {
-                        SDL_BindGPUIndexBuffer(renderPassHandle, ref _bufferBinding, SDL_GPUIndexElementSize.SDL_GPU_INDEXELEMENTSIZE_16BIT);
-                        break;
-                    }
-                default:
-                    {
-                        Debug.Assert(false);
-                        break;
-                    }
-            }
+            case RenderBufferType.Index:
+                {
+                    SDL_BindGPUIndexBuffer(renderPassHandle, ref _bufferBinding, SDL_GPUIndexElementSize.SDL_GPU_INDEXELEMENTSIZE_16BIT);
+                    break;
+                }
+            default:
+                {
+                    Debug.Assert(false);
+                    break;
+                }
         }
+    }
+
+    protected override void FreeResource()
+    {
+        SDL_ReleaseGPUBuffer(Device.Handle, _bufferBinding.buffer);
+
+        _bufferBinding.buffer = IntPtr.Zero;
     }
 }

@@ -41,6 +41,21 @@ internal class SDL3GPURenderContext: IRenderContext
         }
     }
 
+    public IRenderIndexBuffer IndexBuffer
+    {
+        get => _indexBuffer;
+        set
+        {
+            if (_indexBuffer == value)
+            {
+                return;
+            }
+
+            _indexBuffer = value as Sdl3GpuIndexBuffer?? throw new Exception("Wrong type of index buffer");
+            _indexBufferDirty = true;
+        }
+    }
+
     private IntPtr _renderPass;
     private IShaderInstance _shaderInstance;
     private Sdl3GpuGraphicsPipeline? _graphicsPipeline;
@@ -48,18 +63,15 @@ internal class SDL3GPURenderContext: IRenderContext
 
     private bool _stateDirty = true;
     private bool _pipelineDirty = true;
+    private bool _indexBufferDirty = true;
 
     private RenderPassInfo? _activeRenderPass;
 
-    private Sdl3GpuBuffer<ushort> _indexBuffer;
+    private Sdl3GpuIndexBuffer _indexBuffer;
 
     public SDL3GPURenderContext(Sdl3GpuDevice device)
     {
         _device = device;
-
-        ushort[] drawIndices = [ 0, 1, 2 ];
-
-        _indexBuffer = new Sdl3GpuBuffer<ushort>(device, RenderBufferType.Index, drawIndices);
     }
 
     public void BeginRecording()
@@ -69,6 +81,7 @@ internal class SDL3GPURenderContext: IRenderContext
         _graphicsPipeline = null;
         _activeRenderPass = null;
         _pipelineDirty = true;
+        _indexBuffer = null;
 
         Debug.Assert(RecordedCommands != IntPtr.Zero);
     }
@@ -112,8 +125,6 @@ internal class SDL3GPURenderContext: IRenderContext
         _renderPass = SDL_BeginGPURenderPass(RecordedCommands, [colourTargetInfo], 1, IntPtr.Zero);
 
         Debug.Assert(_renderPass != IntPtr.Zero);
-
-        _indexBuffer.Bind(_renderPass);
     }
 
     public void EndRenderPass()
@@ -134,7 +145,14 @@ internal class SDL3GPURenderContext: IRenderContext
 
             _pipelineDirty = false;
         }
+
+        if(_indexBufferDirty)
+        {
+            _indexBuffer.Bind(_renderPass);
+
+            _indexBufferDirty = false;
+        }
         
-        SDL_DrawGPUIndexedPrimitives(_renderPass, _indexBuffer.Length, numInstances, 0, 0, 0);
+        SDL_DrawGPUIndexedPrimitives(_renderPass, (uint)_indexBuffer.Data.Length, numInstances, 0, 0, 0);
     }
 }

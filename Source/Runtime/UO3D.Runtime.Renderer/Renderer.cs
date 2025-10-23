@@ -17,6 +17,8 @@ public class RenderSystem
 
     private RenderPassInfo _mainPass;
 
+    private IRenderIndexBuffer _indexBuffer;
+
     private uint _frameNumber = 0;
 
     public RenderSystem(IRenderer rhiRenderer, IRenderResourceFactory resourceFactory)
@@ -34,6 +36,11 @@ public class RenderSystem
     public void Startup()
     {
         _context = _rhiRenderer.CreateRenderContext();
+        _indexBuffer = _resourceFactory.CreateIndexBuffer(3, "MainIndexBuffer");
+
+        _indexBuffer.SetData([1, 2, 3]);
+
+        _indexBuffer.Upload();
     }
 
     public void FrameBegin()
@@ -44,6 +51,7 @@ public class RenderSystem
 
         _mainPass.RenderTarget = GBufferDiffuse;
 
+        _context.IndexBuffer = _indexBuffer;
         _context.BeginRenderPass(_mainPass);
 
         OnFrameBegin?.Invoke(_context);

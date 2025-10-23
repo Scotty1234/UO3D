@@ -4,10 +4,11 @@ namespace UO3D.Runtime.RHI;
 
 public interface IRenderContext
 {
-    //public IRenderTexture RenderTarget { get; set; }
     public IShaderInstance ShaderInstance { get; set; }
 
     public IGraphicsPipeline GraphicsPipline { get; set; }
+
+    public IRenderIndexBuffer IndexBuffer { get; set; }
 
     public void BeginRenderPass(in RenderPassInfo renderPassInfo);
     public void EndRenderPass();
