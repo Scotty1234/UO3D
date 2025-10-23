@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using static SDL3.SDL;
+
 using UO3D.Runtime.RHI;
 using UO3D.Runtime.RHI.Resources;
 

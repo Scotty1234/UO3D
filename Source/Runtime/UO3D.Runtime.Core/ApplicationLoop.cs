@@ -2,9 +2,9 @@
 
 public class ApplicationLoop
 {
-    public event Action<TimeSpan>? OnUpdate;
+    public event Action<float>? OnUpdate;
 
-    internal void Update(TimeSpan time)
+    internal void Update(float time)
     {
         OnUpdate?.Invoke(time);
     }

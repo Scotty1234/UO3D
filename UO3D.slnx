@@ -34,5 +34,6 @@
     <Project Path="ThirdParty/FNA/FNA.Core.csproj">
       <Platform Solution="Debug|*" Project="x64" />
     </Project>
+    <Project Path="ThirdParty/SDL3-CS/SDL3/SDL3.Core.csproj" />
   </Folder>
 </Solution>

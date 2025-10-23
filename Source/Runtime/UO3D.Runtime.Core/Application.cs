@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
-using Microsoft.Xna.Framework;
 using UO3D.Runtime.Platform;
 using UO3D.Runtime.Plugin;
 using UO3D.Runtime.Renderer;
@@ -39,11 +38,11 @@ public class Application: IDisposable
         InitialiseInternal();
         Initialise();
 
-        GameTime gameTime = new GameTime();
+        float deltaSeconds = 0.0f;
 
         while (_runApplication)
         {
-            Update(gameTime);
+            Update(deltaSeconds);
             _renderSystem.FrameBegin();
             _renderSystem.FrameEnd();
         }
@@ -119,7 +118,7 @@ public class Application: IDisposable
         };
     }
 
-    private void Update(GameTime gameTime)
+    private void Update(float gameTime)
     {
         if(_window.PollEvents())
         {
@@ -128,7 +127,7 @@ public class Application: IDisposable
             return;
         }
 
-        _applicationLoop.Update(gameTime.ElapsedGameTime);
+        _applicationLoop.Update(gameTime);
     }
 
     private void LoadPlugins(string directory, bool recurse = false)

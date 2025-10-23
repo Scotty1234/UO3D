@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ThirdParty\FNA\FNA.Core.csproj" />
+    <ProjectReference Include="..\..\..\ThirdParty\SDL3-CS\SDL3\SDL3.Core.csproj" />
     <ProjectReference Include="..\UO3D.Runtime.Platform\UO3D.Runtime.Platform.csproj" />
     <ProjectReference Include="..\UO3D.Runtime.Plugin\UO3D.Runtime.Plugin.csproj" />
     <ProjectReference Include="..\UO3D.Runtime.RHI\UO3D.Runtime.RHI.csproj" />

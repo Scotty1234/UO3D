@@ -2,5 +2,5 @@
 
 public interface IEntity
 {
-    void Update(TimeSpan time);
+    void Update(float time);
 }
