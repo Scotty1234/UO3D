@@ -9,7 +9,7 @@ namespace UO3D.Runtime.RHI.Resources;
 public enum ShaderProgramType
 {
     Vertex,
-    Fragment,
+    Pixel,
     Compute,
     Count,
     Invalid

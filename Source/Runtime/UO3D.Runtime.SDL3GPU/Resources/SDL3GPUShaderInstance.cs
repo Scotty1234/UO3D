@@ -1,37 +1,28 @@
-﻿using static SDL3.SDL;
-
-using UO3D.Runtime.RHI.Resources;
+﻿using UO3D.Runtime.RHI.Resources;
 
 namespace UO3D.Runtime.SDL3GPU.Resources;
 
-internal class SDL3GPUShaderInstance: IShaderInstance
+internal class Sdl3GpuShaderResource: RhiShaderResource
 {
-    public readonly ShaderParameter[] VertexParameters;
-    public readonly ShaderParameter[] PixelParameters;
+    public SDL3GPUShaderProgram VertexProgram { get; private set; } = null!;
+    public SDL3GPUShaderProgram PixelProgram { get; private set; } = null!;
 
-    public readonly SDL3GPUShaderProgram VertexProgram;
-    public readonly SDL3GPUShaderProgram PixelProgram;
+    private readonly Sdl3GpuDevice _device;
 
-    public SDL3GPUShaderInstance(SDL3GPUShaderProgram vertexProgram, SDL3GPUShaderProgram pixelProgram)
+    public Sdl3GpuShaderResource(Sdl3GpuDevice device)
     {
-        VertexProgram = vertexProgram;
-        PixelProgram = pixelProgram;
-
-        VertexParameters = [.. vertexProgram.Parameters];
-        PixelParameters = [.. pixelProgram.Parameters];
+        _device = device;
     }
 
-    public void GetVertexParameter(string name)
+    public override void Load(string vertexShader, string fragmentShader)
     {
-    }
+        UO3DDxcCompiler.Compile(vertexShader, ShaderProgramType.Vertex, out var vertexCompileResult);
+        UO3DDxcCompiler.Compile(fragmentShader, ShaderProgramType.Pixel, out var fragmentCompileResult);
 
-    public void SetVertexParameter(string name)
-    {
+        VertexProgram = new SDL3GPUShaderProgram(_device, ShaderProgramType.Vertex, vertexCompileResult);
+        PixelProgram = new SDL3GPUShaderProgram(_device, ShaderProgramType.Pixel, fragmentCompileResult);
 
-    }
-
-    public void GetPixelParameter(string name)
-    {
-
+        VertexParameters = [.. VertexProgram.Parameters];
+        PixelParameters = [.. PixelProgram.Parameters];
     }
 }

@@ -5,13 +5,6 @@ using Vortice.Direct3D12.Shader;
 
 namespace UO3D.Runtime.SDL3GPU;
 
-[DebuggerDisplay("{Name}, {Register}")]
-struct ShaderParameter
-{
-    public string Name;
-    public uint Register;
-}
-
 struct ShaderProgramCompileResult
 {
     public byte[] ByteCode;
@@ -35,7 +28,7 @@ internal class UO3DDxcCompiler
         switch (type)
         {
             case ShaderProgramType.Vertex: targetProfileType = "vs"; break;
-            case ShaderProgramType.Fragment: targetProfileType = "ps"; break;
+            case ShaderProgramType.Pixel: targetProfileType = "ps"; break;
             default: Debug.Assert(false); break;
         }
 

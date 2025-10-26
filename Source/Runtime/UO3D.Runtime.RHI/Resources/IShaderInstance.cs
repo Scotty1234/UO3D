@@ -1,5 +1,8 @@
-﻿namespace UO3D.Runtime.RHI.Resources;
+﻿//using System.Numerics;
 
-public interface IShaderInstance
-{
-}
+//namespace UO3D.Runtime.RHI.Resources;
+
+//public interface IShaderInstance
+//{
+//    public void SetParameter(ShaderProgramType programType, string name, in Matrix4x4 value);
+//}

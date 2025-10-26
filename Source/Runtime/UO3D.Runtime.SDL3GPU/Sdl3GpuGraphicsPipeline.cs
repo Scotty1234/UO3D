@@ -12,11 +12,13 @@ internal class Sdl3GpuGraphicsPipeline: Sdl3GpuResource, IGraphicsPipeline
     public readonly SDL3GPUShaderProgram VertexProgram;
     public readonly SDL3GPUShaderProgram PixelProgram;
 
-    public Sdl3GpuGraphicsPipeline(Sdl3GpuDevice device, SDL3GPUShaderProgram vertexProgram, SDL3GPUShaderProgram pixelProgram, string name = "")
+    public Sdl3GpuGraphicsPipeline(Sdl3GpuDevice device, in GraphicsPipelineDescription graphicsPipelineDescription)
         : base(device)
     {
-        VertexProgram = vertexProgram;
-        PixelProgram = pixelProgram;
+        Sdl3GpuShaderResource shaderResource = (Sdl3GpuShaderResource)graphicsPipelineDescription.ShaderResource;
+
+        VertexProgram = shaderResource!.VertexProgram;
+        PixelProgram = shaderResource.PixelProgram; ;
 
         SDL_GPUColorTargetDescription colourTargetDesc = new SDL_GPUColorTargetDescription
         {
@@ -27,8 +29,8 @@ internal class Sdl3GpuGraphicsPipeline: Sdl3GpuResource, IGraphicsPipeline
         {
             var createInfo = new SDL_GPUGraphicsPipelineCreateInfo
             {
-                vertex_shader = vertexProgram.Handle,
-                fragment_shader = pixelProgram.Handle,
+                vertex_shader = VertexProgram.Handle,
+                fragment_shader = PixelProgram.Handle,
                 primitive_type = SDL_GPUPrimitiveType.SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
                 target_info = new SDL_GPUGraphicsPipelineTargetInfo
                 {
@@ -42,11 +44,11 @@ internal class Sdl3GpuGraphicsPipeline: Sdl3GpuResource, IGraphicsPipeline
                     fill_mode = SDL_GPUFillMode.SDL_GPU_FILLMODE_FILL,
                     front_face = SDL_GPUFrontFace.SDL_GPU_FRONTFACE_CLOCKWISE
                 },
-                props = CreateProperty(SDL_PROP_GPU_GRAPHICSPIPELINE_CREATE_NAME_STRING, name)
+                props = CreateProperty(SDL_PROP_GPU_GRAPHICSPIPELINE_CREATE_NAME_STRING, graphicsPipelineDescription.Name)
                 
             };
 
-            Handle = SDL_CreateGPUGraphicsPipeline(device.Handle, ref createInfo);
+            Handle = SDL_CreateGPUGraphicsPipeline(device.Handle, createInfo);
         }
 
         Debug.Assert(Handle != IntPtr.Zero);

@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using UO3D.Runtime.RHI.Resources;
+
 using static SDL3.SDL;
+
+using UO3D.Runtime.RHI.Resources;
 
 namespace UO3D.Runtime.SDL3GPU.Resources;
 
@@ -21,7 +23,7 @@ internal class SDL3GPUShaderProgram: Sdl3GpuResource
         switch(type)
         {
             case ShaderProgramType.Vertex:  stage = SDL_GPUShaderStage.SDL_GPU_SHADERSTAGE_VERTEX; break;
-            case ShaderProgramType.Fragment: stage = SDL_GPUShaderStage.SDL_GPU_SHADERSTAGE_FRAGMENT; break;
+            case ShaderProgramType.Pixel: stage = SDL_GPUShaderStage.SDL_GPU_SHADERSTAGE_FRAGMENT; break;
             default: Debug.Assert(false); break;    
         }
 
@@ -42,7 +44,7 @@ internal class SDL3GPUShaderProgram: Sdl3GpuResource
                     format = SDL_GPUShaderFormat.SDL_GPU_SHADERFORMAT_DXIL,
                 };
 
-                Handle = SDL_CreateGPUShader(Device.Handle, ref createInfo);
+                Handle = SDL_CreateGPUShader(Device.Handle, createInfo);
             }
         }
 

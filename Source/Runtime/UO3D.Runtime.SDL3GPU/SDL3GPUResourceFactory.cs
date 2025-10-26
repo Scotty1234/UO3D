@@ -17,17 +17,14 @@ internal class SDL3GPUResourceFactory : IRenderResourceFactory
         _device = device;
     }
 
-    public IShaderInstance CreateShaderInstance(string vertexShader, string fragmentShader)
+    public RhiShaderResource NewShaderResource()
     {
-        UO3DDxcCompiler.Compile(vertexShader, ShaderProgramType.Vertex, out var vertexCompileResult);
-        UO3DDxcCompiler.Compile(fragmentShader, ShaderProgramType.Fragment, out var fragmentCompileResult);
+        return new Sdl3GpuShaderResource(_device);
+    }
 
-        var vertexProgram = new SDL3GPUShaderProgram(_device, ShaderProgramType.Vertex, vertexCompileResult);
-        var fragmentProgram = new SDL3GPUShaderProgram(_device, ShaderProgramType.Fragment, fragmentCompileResult);
-
-        var shaderInstance = new SDL3GPUShaderInstance(vertexProgram, fragmentProgram);
-
-        return shaderInstance;
+    public ShaderInstance NewShaderInstance(RhiShaderResource shaderResource)
+    {
+        return new ShaderInstance(shaderResource);
     }
 
     public IRenderTexture CreateTexture(uint width, uint height)
@@ -44,11 +41,9 @@ internal class SDL3GPUResourceFactory : IRenderResourceFactory
         return texture;
     }
 
-    public IGraphicsPipeline CreateGraphicsPipeline(IShaderInstance shaderInstance, string name)
+    public IGraphicsPipeline CreateGraphicsPipeline(in GraphicsPipelineDescription graphicsPipelineDescription)
     {
-        SDL3GPUShaderInstance sdl3GpuShaderInstance = (shaderInstance as SDL3GPUShaderInstance)!;
-
-        var pipeline = new Sdl3GpuGraphicsPipeline(_device, sdl3GpuShaderInstance.VertexProgram, sdl3GpuShaderInstance.PixelProgram, name);
+        var pipeline = new Sdl3GpuGraphicsPipeline(_device, graphicsPipelineDescription);
 
         return pipeline;
     }

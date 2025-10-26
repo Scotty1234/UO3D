@@ -11,7 +11,7 @@ internal class SDL3GPURenderContext: IRenderContext
 {
     public IntPtr RecordedCommands { get; private set; }
 
-    public IShaderInstance ShaderInstance
+    public ShaderInstance ShaderInstance
     {
         get => _shaderInstance;
         set 
@@ -22,7 +22,7 @@ internal class SDL3GPURenderContext: IRenderContext
             }
 
             _shaderInstance = value;
-            _stateDirty = true;
+            _shaderInstanceDirty = true;
         }
     }
 
@@ -57,13 +57,13 @@ internal class SDL3GPURenderContext: IRenderContext
     }
 
     private IntPtr _renderPass;
-    private IShaderInstance _shaderInstance;
+    private ShaderInstance _shaderInstance;
     private Sdl3GpuGraphicsPipeline? _graphicsPipeline;
     private readonly Sdl3GpuDevice _device;
 
-    private bool _stateDirty = true;
     private bool _pipelineDirty = true;
     private bool _indexBufferDirty = true;
+    private bool _shaderInstanceDirty = true;
 
     private RenderPassInfo? _activeRenderPass;
 
@@ -144,6 +144,7 @@ internal class SDL3GPURenderContext: IRenderContext
             SDL_BindGPUGraphicsPipeline(_renderPass, _graphicsPipeline.Handle);
 
             _pipelineDirty = false;
+            _shaderInstanceDirty = true;
         }
 
         if(_indexBufferDirty)
@@ -151,6 +152,11 @@ internal class SDL3GPURenderContext: IRenderContext
             _indexBuffer.Bind(_renderPass);
 
             _indexBufferDirty = false;
+        }
+
+        if(_shaderInstanceDirty)
+        {
+            _shaderInstanceDirty = false;
         }
         
         SDL_DrawGPUIndexedPrimitives(_renderPass, (uint)_indexBuffer.Data.Length, numInstances, 0, 0, 0);

@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
 
-namespace UO3D.Runtime.Renderer.Resources;
+//namespace UO3D.Runtime.Renderer.Resources;
 
-public enum ShaderProgramType
-{
-    Vertex,
-    Fragment,
-    Compute,
-    Count,
-    Invalid
-}
+//public enum ShaderProgramType
+//{
+//    Vertex,
+//    Pixel,
+//    Compute,
+//    Count,
+//    Invalid
+//}

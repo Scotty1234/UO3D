@@ -4,7 +4,7 @@ namespace UO3D.Runtime.RHI;
 
 public interface IRenderContext
 {
-    public IShaderInstance ShaderInstance { get; set; }
+    public ShaderInstance ShaderInstance { get; set; }
 
     public IGraphicsPipeline GraphicsPipline { get; set; }
 
