@@ -10,6 +10,7 @@ public class RenderSystem
     public event Action<IRenderContext>? OnFrameEnd;
 
     public RenderTarget GBufferDiffuse;
+    public RenderTarget UIOverlay;
 
     private IRenderContext _context = null!;
     private readonly IRenderer _rhiRenderer;

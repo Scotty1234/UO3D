@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ImGui.NET\**" />
+    <EmbeddedResource Remove="ImGui.NET\**" />
+    <None Remove="ImGui.NET\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hexa.NET.ImGui" Version="2.2.9" />
+    <PackageReference Include="HexaGen.Runtime" Version="1.1.22" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UO3D.Runtime.Core\UO3D.Runtime.Core.csproj" />
+    <ProjectReference Include="..\UO3D.Runtime.Plugin\UO3D.Runtime.Plugin.csproj" />
+    <ProjectReference Include="..\UO3D.Runtime.Renderer\UO3D.Runtime.Renderer.csproj" />
+    <ProjectReference Include="..\UO3D.Runtime.RHI\UO3D.Runtime.RHI.csproj" />
+  </ItemGroup>
+
+</Project>

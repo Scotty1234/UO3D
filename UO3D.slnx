@@ -26,6 +26,9 @@
     <Project Path="Source/Runtime/UO3D.Runtime.SDL3GPU/UO3D.Runtime.SDL3GPU.csproj" Id="49da6025-83a9-4034-875a-777bbeffdbae">
       <Platform Project="x64" />
     </Project>
+    <Project Path="Source/Runtime/UO3D.Runtime.UI/UO3D.Runtime.UI.csproj">
+      <Platform Project="x64" />
+    </Project>
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path="Source/Directory.Build.Props" />
@@ -34,6 +37,7 @@
     <Project Path="ThirdParty/FNA/FNA.Core.csproj">
       <Platform Solution="Debug|*" Project="x64" />
     </Project>
+    <Project Path="ThirdParty/Hexa.NET.ImGui/Hexa.NET.ImGui/Hexa.NET.ImGui.csproj" />
     <Project Path="ThirdParty/SDL3-CS/SDL3/SDL3.Core.csproj" />
   </Folder>
 </Solution>
