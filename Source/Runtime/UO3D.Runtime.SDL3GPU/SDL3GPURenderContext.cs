@@ -69,6 +69,14 @@ internal class SDL3GPURenderContext: IRenderContext
 
     private Sdl3GpuIndexBuffer _indexBuffer;
 
+    private delegate void ShaderUploadFunc(IntPtr recordedCommands, uint bindingIndex, IntPtr dataPtr, uint dataSize);
+
+    private static readonly ShaderUploadFunc[] UploadFuncs =
+    {
+        SDL_PushGPUVertexUniformData,
+        SDL_PushGPUFragmentUniformData
+    };
+
     public SDL3GPURenderContext(Sdl3GpuDevice device)
     {
         _device = device;
@@ -156,9 +164,37 @@ internal class SDL3GPURenderContext: IRenderContext
 
         if(_shaderInstanceDirty)
         {
+            BindShaderParameters();
+
             _shaderInstanceDirty = false;
         }
         
         SDL_DrawGPUIndexedPrimitives(_renderPass, (uint)_indexBuffer.Data.Length, numInstances, 0, 0, 0);
+    }
+
+    private void BindShaderParameters()
+    {
+        for(int i = 0; i < (int)ShaderProgramType.Count; i++)
+        {
+            var bindings = _shaderInstance.BindingData[i].Bindings;
+
+            if(bindings is null)
+            {
+                continue;
+            }
+
+            var upload = UploadFuncs[i];
+
+            foreach (var entry in bindings)
+            {
+               unsafe
+                {
+                    fixed(byte* data = entry.Data)
+                    {
+                        upload(RecordedCommands, entry.BindingIndex, (IntPtr)data, (uint)entry.Data.Length);
+                    }
+                }
+            }
+        }
     }
 }

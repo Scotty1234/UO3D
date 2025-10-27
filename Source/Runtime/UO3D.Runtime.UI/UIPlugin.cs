@@ -20,11 +20,11 @@ public class UIPlugin : IPlugin
         _rendererSystem = renderer;
         _renderFactory = renderFactory;
 
-        _rendererSystem.OnFrameBegin += OnFrameBegin;
+        //_rendererSystem.OnFrameBegin += OnFrameBegin;
 
-        _rendererSystem.OnFrameEnd += OnFrameEnd;
+        //_rendererSystem.OnFrameEnd += OnFrameEnd;
 
-        applicationLoop.OnUpdate += Update;
+        //applicationLoop.OnUpdate += Update;
     }
 
     public void Startup()
@@ -61,6 +61,11 @@ public class UIPlugin : IPlugin
             Name = "UI",
             RenderTarget = _rendererSystem.UIOverlay
         });
+
+        for(int i = 0; i < drawData.CmdListsCount; i++)
+        {
+            // Build vertex buffers
+        }
 
         renderContext.EndRenderPass();
     }

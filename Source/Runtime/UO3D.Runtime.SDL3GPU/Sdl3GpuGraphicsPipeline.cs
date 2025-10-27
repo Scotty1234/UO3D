@@ -44,8 +44,7 @@ internal class Sdl3GpuGraphicsPipeline: Sdl3GpuResource, IGraphicsPipeline
                     fill_mode = SDL_GPUFillMode.SDL_GPU_FILLMODE_FILL,
                     front_face = SDL_GPUFrontFace.SDL_GPU_FRONTFACE_CLOCKWISE
                 },
-                props = CreateProperty(SDL_PROP_GPU_GRAPHICSPIPELINE_CREATE_NAME_STRING, graphicsPipelineDescription.Name)
-                
+                props = CreateProperty(SDL_PROP_GPU_GRAPHICSPIPELINE_CREATE_NAME_STRING, graphicsPipelineDescription.Name),
             };
 
             Handle = SDL_CreateGPUGraphicsPipeline(device.Handle, createInfo);

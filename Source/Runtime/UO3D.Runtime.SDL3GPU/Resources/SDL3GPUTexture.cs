@@ -37,7 +37,7 @@ internal class SDL3GPUTexture: Sdl3GpuResource, IRenderTexture
             props = 0,
         };
 
-        Handle = SDL_CreateGPUTexture(Device.Handle, ref createInfo);
+        Handle = SDL_CreateGPUTexture(Device.Handle, createInfo);
     }
 
     public void InitFromExistingResource(IntPtr _handle)

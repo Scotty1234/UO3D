@@ -1,14 +1,16 @@
 ﻿using System.Diagnostics;
 using UO3D.Runtime.RHI.Resources;
-using Vortice.Dxc;
+using Vortice.Direct3D;
 using Vortice.Direct3D12.Shader;
+using Vortice.Dxc;
 
 namespace UO3D.Runtime.SDL3GPU;
 
 struct ShaderProgramCompileResult
 {
     public byte[] ByteCode;
-    public ShaderParameter[] InputParameters;
+    public ShaderStreamBinding[] StreamBindings;
+    public ShaderParameter[] UniformBindings;
 }
 
 internal class UO3DDxcCompiler
@@ -58,21 +60,46 @@ internal class UO3DDxcCompiler
 
         using ID3D12ShaderReflection reflection = DxcCompiler.Utils.CreateReflection<ID3D12ShaderReflection>(blob);
 
+        List<ShaderParameter> shaderParameters = [];
+
         for(uint i = 0; i < reflection.BoundResources.Length; i++)
         {
+            var resourceDescription = reflection.BoundResources[i];
+            
+            if(resourceDescription.Type == Vortice.Direct3D.ShaderInputType.ConstantBuffer)
+            {
+                ID3D12ShaderReflectionConstantBuffer constantBuffer = reflection.GetConstantBufferByName(resourceDescription.Name);
+                
+                for(uint j = 0; j < constantBuffer.Variables.Length; j++)
+                {
+                    ShaderVariableDescription varDesc = constantBuffer.GetVariableByIndex(j).Description;
 
+                    shaderParameters.Add(new ShaderParameter
+                    {
+                        Name = varDesc.Name,
+                        StartOffset = varDesc.StartOffset,
+                        Size = varDesc.Size,
+                    });
+                }
+            }
+            else
+            {
+                Debug.Assert(false);
+            }
         }
 
-        outCompileResult.InputParameters = new ShaderParameter[reflection.InputParameters.Length];
+        outCompileResult.UniformBindings = [.. shaderParameters];
+
+        outCompileResult.StreamBindings = new ShaderStreamBinding[reflection.InputParameters.Length];
 
         for (uint i = 0; i < reflection.InputParameters.Length; i++)
         {
             var param = reflection.InputParameters[i];
 
-            outCompileResult.InputParameters[i] = new ShaderParameter
+            outCompileResult.StreamBindings[i] = new ShaderStreamBinding
             {
-                Name = param.SemanticName,
-                Register = param.Register
+                SemanticName = param.SemanticName,
+                SemanticIndex = param.Register
             };
         }
     }

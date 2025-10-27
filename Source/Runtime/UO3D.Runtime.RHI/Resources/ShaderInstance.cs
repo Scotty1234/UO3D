@@ -37,7 +37,7 @@ public class ShaderInstance
 
         for(int i = 0; i < _shaderResource.VertexParameters.Length; i++)
         {
-            BindingData[(int)ShaderProgramType.Vertex].Bindings[i] = new ShaderBindingDataEntry(_shaderResource.VertexParameters[i].Register, _shaderResource.VertexParameters[i].Size);
+            BindingData[(int)ShaderProgramType.Vertex].Bindings[i] = new ShaderBindingDataEntry(_shaderResource.VertexParameters[i].SlotIndex, _shaderResource.VertexParameters[i].Size);
         }
     }
 
@@ -49,6 +49,8 @@ public class ShaderInstance
     public void SetParameter(ShaderBindingHandle bindingHandle, in Matrix4x4 matrix)
     {
         var memory = BindingData[(int)bindingHandle.ProgramType].Bindings[bindingHandle.Handle].Data;
+
+        Debug.Assert(memory != null);
 
         MemoryMarshal.Write(memory.AsSpan(), matrix);
     }

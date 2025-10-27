@@ -2,12 +2,29 @@
 
 namespace UO3D.Runtime.RHI.Resources;
 
-[DebuggerDisplay("{Name}, {Register}")]
+public enum ShaderInputType
+{
+    Buffer,
+    Texture,
+    Count,
+    Invalid
+}
+
+[DebuggerDisplay("{Name}")]
 public struct ShaderParameter
 {
     public string Name;
-    public uint Register;
+    public uint StartOffset;
     public uint Size;
+    ShaderInputType InputType;
+    public uint SlotIndex;
+}
+
+[DebuggerDisplay("{SemanticName}, {SemanticIndex}")]
+public struct ShaderStreamBinding
+{
+    public string SemanticName;
+    public uint SemanticIndex;
 }
 
 public readonly struct ShaderBindingHandle

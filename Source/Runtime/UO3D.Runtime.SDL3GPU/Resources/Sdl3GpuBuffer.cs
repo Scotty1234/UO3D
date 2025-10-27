@@ -40,7 +40,7 @@ internal class Sdl3GpuBuffer<T>: Sdl3GpuResource
 
         _description.size = (uint)(length * Marshal.SizeOf<T>());
 
-        Handle = SDL_CreateGPUBuffer(device.Handle, ref _description);
+        Handle = SDL_CreateGPUBuffer(device.Handle, _description);
 
         _bufferBinding.buffer = Handle;
 
@@ -56,7 +56,7 @@ internal class Sdl3GpuBuffer<T>: Sdl3GpuResource
             usage = SDL_GPUTransferBufferUsage.SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD
         };
 
-        IntPtr transferBuffer = SDL_CreateGPUTransferBuffer(_device.Handle, ref createInfo);
+        IntPtr transferBuffer = SDL_CreateGPUTransferBuffer(_device.Handle, createInfo);
 
         IntPtr mappedMemory = SDL_MapGPUTransferBuffer(Device.Handle, transferBuffer, false);
 
@@ -87,7 +87,7 @@ internal class Sdl3GpuBuffer<T>: Sdl3GpuResource
             size = _description.size
         };
 
-        SDL_UploadToGPUBuffer(copyPass, ref location, ref region, false);
+        SDL_UploadToGPUBuffer(copyPass, location, region, false);
 
         SDL_EndGPUCopyPass(copyPass);
         SDL_SubmitGPUCommandBuffer(commandBuffer);
@@ -101,7 +101,7 @@ internal class Sdl3GpuBuffer<T>: Sdl3GpuResource
         {
             case RenderBufferType.Index:
                 {
-                    SDL_BindGPUIndexBuffer(renderPassHandle, ref _bufferBinding, SDL_GPUIndexElementSize.SDL_GPU_INDEXELEMENTSIZE_16BIT);
+                    SDL_BindGPUIndexBuffer(renderPassHandle, _bufferBinding, SDL_GPUIndexElementSize.SDL_GPU_INDEXELEMENTSIZE_16BIT);
                     break;
                 }
             default:

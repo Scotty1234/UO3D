@@ -25,13 +25,18 @@ static const float2 cQuadUVs[4] =
     { 0.0,  1.0 },
 };
 
+cbuffer PerViewData : register(b0, space1)
+{
+    float4x4 Projection;
+};
+
 VsToPs main(uint vid : SV_VertexID, uint instance_id : SV_InstanceID)
 {
     VsToPs output;
 
     float4 vert = cQuadVertsNDC[vid];
 
-    output.position = vert;
+    output.position = mul(Projection, vert);
     output.position.w = 1.0f;
     output.uv = cQuadUVs[vid];
     output.instanceIndex = instance_id;

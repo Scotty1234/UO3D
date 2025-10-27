@@ -1,9 +1,16 @@
 ﻿using System.Numerics;
+using System.Runtime.InteropServices;
 using UO3D.Runtime.Core;
 using UO3D.Runtime.RHI;
 using UO3D.Runtime.RHI.Resources;
 
 namespace UO3D;
+
+[StructLayout(LayoutKind.Sequential, Pack = 16)]
+struct PerViewData
+{
+    Matrix4x4 Projection;
+}
 
 internal class UO3DApplication: Application
 {
@@ -24,7 +31,7 @@ internal class UO3DApplication: Application
 
         _shaderInstance = renderFactory.NewShaderInstance(_shaderResource);
 
-        //_projectionBinding = _shaderInstance.GetBindingHandle(ShaderProgramType.Vertex, "Projection");
+        _projectionBinding = _shaderInstance.GetBindingHandle(ShaderProgramType.Vertex, "Projection");
 
         _pipeline = renderFactory.CreateGraphicsPipeline(new GraphicsPipelineDescription
         {
@@ -37,7 +44,7 @@ internal class UO3DApplication: Application
     {
         Matrix4x4 projection = Matrix4x4.Identity;
 
-        //_shaderInstance.SetParameter(_projectionBinding, projection);
+        _shaderInstance.SetParameter(_projectionBinding, projection);
 
         context.ShaderInstance = _shaderInstance;
         context.GraphicsPipline = _pipeline;

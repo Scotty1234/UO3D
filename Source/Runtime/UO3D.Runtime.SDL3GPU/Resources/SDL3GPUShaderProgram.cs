@@ -11,7 +11,8 @@ internal class SDL3GPUShaderProgram: Sdl3GpuResource
 {
     public readonly ShaderProgramType Type;
 
-    public readonly List<ShaderParameter> Parameters = [];
+    public readonly ShaderParameter[] UniformBindings = [];
+    public readonly ShaderStreamBinding[] StreamBindings = [];
 
     public SDL3GPUShaderProgram(Sdl3GpuDevice device, ShaderProgramType type, in ShaderProgramCompileResult compileResult)
         : base(device)
@@ -26,6 +27,9 @@ internal class SDL3GPUShaderProgram: Sdl3GpuResource
             case ShaderProgramType.Pixel: stage = SDL_GPUShaderStage.SDL_GPU_SHADERSTAGE_FRAGMENT; break;
             default: Debug.Assert(false); break;    
         }
+
+        StreamBindings = compileResult.StreamBindings;
+        UniformBindings = compileResult.UniformBindings;
 
         string entryName = "main";
         Span<byte> span = Encoding.ASCII.GetBytes(entryName);
@@ -42,6 +46,7 @@ internal class SDL3GPUShaderProgram: Sdl3GpuResource
                     entrypoint = p,
                     stage = stage,
                     format = SDL_GPUShaderFormat.SDL_GPU_SHADERFORMAT_DXIL,
+                    num_uniform_buffers = (uint)UniformBindings.Length
                 };
 
                 Handle = SDL_CreateGPUShader(Device.Handle, createInfo);
@@ -49,11 +54,6 @@ internal class SDL3GPUShaderProgram: Sdl3GpuResource
         }
 
         Debug.Assert(Handle !=  IntPtr.Zero);
-
-        foreach(var input in compileResult.InputParameters)
-        {
-            Parameters.Add(input);
-        }
     }
 
     protected override void FreeResource()
