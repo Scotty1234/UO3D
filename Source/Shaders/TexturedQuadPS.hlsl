@@ -5,7 +5,12 @@ struct VsToPs
     float2 uv: TEXCOORD0;
 };
 
+Texture2D Texture : register(t0, space2);
+SamplerState Sampler : register(s0, space2);
+
 float4 main(in VsToPs input) : SV_TARGET
 {
-    return float4(1.0f, 0.0f, 0.0f, 1.0f);
+    float4 colour = Texture.Sample(Sampler, input.uv);
+    
+    return colour;
 }    

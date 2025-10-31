@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+
 using static SDL3.SDL;
 
 using UO3D.Runtime.RHI;
@@ -36,7 +37,7 @@ internal class SDL3GPURenderContext: IRenderContext
                 return;
             }
 
-            _graphicsPipeline = value as Sdl3GpuGraphicsPipeline?? throw new Exception("Wrong type of graphics pipeline");
+            _graphicsPipeline = (Sdl3GpuGraphicsPipeline)value;
             _pipelineDirty = true;
         }
     }
@@ -51,8 +52,25 @@ internal class SDL3GPURenderContext: IRenderContext
                 return;
             }
 
-            _indexBuffer = value as Sdl3GpuIndexBuffer?? throw new Exception("Wrong type of index buffer");
+            _indexBuffer = (Sdl3GpuIndexBuffer)value;
             _indexBufferDirty = true;
+        }
+    }
+
+    public ModelViewProjection MVP 
+    { 
+        get => _sceneView; 
+        set
+        {
+            _sceneView = value;
+
+            unsafe
+            {
+                fixed(ModelViewProjection* data = &_sceneView)
+                {
+                    SDL_PushGPUVertexUniformData(RecordedCommands, 0, (IntPtr)data, (uint)sizeof(ModelViewProjection));
+                }
+            }
         }
     }
 
@@ -68,6 +86,7 @@ internal class SDL3GPURenderContext: IRenderContext
     private RenderPassInfo? _activeRenderPass;
 
     private Sdl3GpuIndexBuffer _indexBuffer;
+    private ModelViewProjection _sceneView;
 
     private delegate void ShaderUploadFunc(IntPtr recordedCommands, uint bindingIndex, IntPtr dataPtr, uint dataSize);
 
@@ -164,7 +183,7 @@ internal class SDL3GPURenderContext: IRenderContext
 
         if(_shaderInstanceDirty)
         {
-            BindShaderParameters();
+            //BindShaderParameters();
 
             _shaderInstanceDirty = false;
         }

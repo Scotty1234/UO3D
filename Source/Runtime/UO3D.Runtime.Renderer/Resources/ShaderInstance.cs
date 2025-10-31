@@ -1,17 +1,17 @@
-﻿namespace UO3D.Runtime.Renderer.Resources;
+﻿//namespace UO3D.Runtime.Renderer.Resources;
 
-public class ShaderInstance
-{
+//public class ShaderInstance
+//{
 
-    public ShaderInstance(byte[] shaderBytecode)
-    {
-    }
+//    public ShaderInstance(byte[] shaderBytecode)
+//    {
+//    }
 
-    public void Bind()
-    {
-    }
+//    public void Bind()
+//    {
+//    }
 
-    public void SetParameter(string name, object value)
-    {
-    }
-}
+//    public void SetParameter(string name, object value)
+//    {
+//    }
+//}

@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics;
-using UO3D.Runtime.RHI.Resources;
+
 using Vortice.Direct3D;
 using Vortice.Direct3D12.Shader;
 using Vortice.Dxc;
+
+using UO3D.Runtime.RHI.Resources;
 
 namespace UO3D.Runtime.SDL3GPU;
 
@@ -11,6 +13,7 @@ struct ShaderProgramCompileResult
     public byte[] ByteCode;
     public ShaderStreamBinding[] StreamBindings;
     public ShaderParameter[] UniformBindings;
+    public uint NumSamplers;
 }
 
 internal class UO3DDxcCompiler
@@ -65,27 +68,67 @@ internal class UO3DDxcCompiler
         for(uint i = 0; i < reflection.BoundResources.Length; i++)
         {
             var resourceDescription = reflection.BoundResources[i];
-            
-            if(resourceDescription.Type == Vortice.Direct3D.ShaderInputType.ConstantBuffer)
+
+            uint size = 0;
+            RhiShaderInputType inputType = RhiShaderInputType.Invalid;
+
+            ShaderVariable[] shaderVariables = [];
+
+            if (resourceDescription.Type == ShaderInputType.ConstantBuffer)
             {
                 ID3D12ShaderReflectionConstantBuffer constantBuffer = reflection.GetConstantBufferByName(resourceDescription.Name);
-                
-                for(uint j = 0; j < constantBuffer.Variables.Length; j++)
+
+                inputType = RhiShaderInputType.Buffer;
+
+                shaderVariables = new ShaderVariable[constantBuffer.Variables.Length];
+
+                for (uint j = 0; j < constantBuffer.Variables.Length; j++)
                 {
                     ShaderVariableDescription varDesc = constantBuffer.GetVariableByIndex(j).Description;
 
-                    shaderParameters.Add(new ShaderParameter
+                    size += varDesc.Size;
+
+                    shaderVariables[j] = new ShaderVariable
                     {
                         Name = varDesc.Name,
-                        StartOffset = varDesc.StartOffset,
-                        Size = varDesc.Size,
-                    });
+                        Offset = varDesc.StartOffset,
+                        Size = varDesc.Size
+                    };
                 }
+            }
+            else if(resourceDescription.Type == ShaderInputType.Sampler)
+            {
+                if(resourceDescription.Space != 2)
+                {
+                    throw new Exception("Samplers must be in shader register space 2 for Sdl3Gpu");
+                }
+
+                outCompileResult.NumSamplers++;
+
+                continue;
+            }
+            else if (resourceDescription.Type == ShaderInputType.Texture)
+            {
+                if (resourceDescription.Space != 2)
+                {
+                    throw new Exception("Textures must be in shader register space 2 for Sdl3Gpu");
+                }
+
+                inputType = RhiShaderInputType.Texture;
             }
             else
             {
                 Debug.Assert(false);
             }
+
+            shaderParameters.Add(new ShaderParameter
+            {
+                Name = resourceDescription.Name,
+                SlotIndex = resourceDescription.BindPoint,
+                Size = size,
+                InputType = inputType,
+                Variables = shaderVariables
+            });
         }
 
         outCompileResult.UniformBindings = [.. shaderParameters];

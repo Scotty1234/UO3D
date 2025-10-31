@@ -29,6 +29,8 @@ public class ShaderInstance
 
     private readonly RhiShaderResource _shaderResource;
 
+    private readonly IRenderTexture[] _textures;
+
     public ShaderInstance(RhiShaderResource shaderResource)
     {
         _shaderResource = shaderResource;
@@ -39,11 +41,30 @@ public class ShaderInstance
         {
             BindingData[(int)ShaderProgramType.Vertex].Bindings[i] = new ShaderBindingDataEntry(_shaderResource.VertexParameters[i].SlotIndex, _shaderResource.VertexParameters[i].Size);
         }
+
+        int numTextures = 0;
+
+        for (int i = 0; i < _shaderResource.PixelParameters.Length; i++)
+        {
+            if(_shaderResource.VertexParameters[i].InputType == RhiShaderInputType.Texture)
+            {
+                numTextures++;
+            }
+
+            BindingData[(int)ShaderProgramType.Pixel].Bindings[i] = new ShaderBindingDataEntry(_shaderResource.VertexParameters[i].SlotIndex, _shaderResource.VertexParameters[i].Size);
+        }
+
+        _textures = new IRenderTexture[numTextures];
     }
 
-    public ShaderBindingHandle GetBindingHandle(ShaderProgramType programType, string name)
+    public ShaderBindingHandle GetBindingHandleTexturePixel(string name)
     {
-        return _shaderResource.GetBindingHandle(programType, name);
+        return GetBindingHandle(ShaderProgramType.Pixel, RhiShaderInputType.Texture, name);
+    }
+
+    public ShaderBindingHandle GetBindingHandle(ShaderProgramType programType, RhiShaderInputType inputType, string name)
+    {
+        return _shaderResource.GetBindingHandle(programType, inputType, name);
     }
 
     public void SetParameter(ShaderBindingHandle bindingHandle, in Matrix4x4 matrix)
@@ -53,5 +74,10 @@ public class ShaderInstance
         Debug.Assert(memory != null);
 
         MemoryMarshal.Write(memory.AsSpan(), matrix);
+    }
+
+    public void SetTexture(ShaderBindingHandle bindingHandle, IRenderTexture texture)
+    {
+        _textures[bindingHandle.Handle] = texture;
     }
 }

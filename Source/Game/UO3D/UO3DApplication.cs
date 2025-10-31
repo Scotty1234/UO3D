@@ -6,18 +6,14 @@ using UO3D.Runtime.RHI.Resources;
 
 namespace UO3D;
 
-[StructLayout(LayoutKind.Sequential, Pack = 16)]
-struct PerViewData
-{
-    Matrix4x4 Projection;
-}
-
 internal class UO3DApplication: Application
 {
     private RhiShaderResource _shaderResource = null!;
     private ShaderInstance _shaderInstance = null!;
     private ShaderBindingHandle _projectionBinding;
     private IGraphicsPipeline _pipeline = null!;
+    private IRenderTexture _whiteTexture = null!;
+    ShaderBindingHandle _textureBindingHandle = null!;
 
     protected override void Initialise()
     {
@@ -31,7 +27,15 @@ internal class UO3DApplication: Application
 
         _shaderInstance = renderFactory.NewShaderInstance(_shaderResource);
 
-        _projectionBinding = _shaderInstance.GetBindingHandle(ShaderProgramType.Vertex, "Projection");
+        _textureBindingHandle = _shaderInstance.GetBindingHandleTexturePixel("Texture");
+
+        _whiteTexture = renderFactory.CreateTexture(22, 22);
+
+        uint[] white = new uint[22 * 22];
+
+        _whiteTexture.SetData(white);
+
+        //_projectionBinding = _shaderInstance.GetBindingHandle(ShaderProgramType.Vertex, "Projection");
 
         _pipeline = renderFactory.CreateGraphicsPipeline(new GraphicsPipelineDescription
         {
@@ -44,10 +48,16 @@ internal class UO3DApplication: Application
     {
         Matrix4x4 projection = Matrix4x4.Identity;
 
-        _shaderInstance.SetParameter(_projectionBinding, projection);
+        context.MVP = new ModelViewProjection
+        {
+            Projection = Matrix4x4.Identity,
+            View = Matrix4x4.CreateTranslation(-0.5f, -0.5f, 0.0f)
+        };
 
-        context.ShaderInstance = _shaderInstance;
+        _shaderInstance.SetParameter()
+
         context.GraphicsPipline = _pipeline;
+        context.ShaderInstance = _shaderInstance;
 
         context.DrawIndexedPrimitives(1);
     }

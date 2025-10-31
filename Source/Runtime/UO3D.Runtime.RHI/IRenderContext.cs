@@ -1,6 +1,15 @@
-﻿using UO3D.Runtime.RHI.Resources;
+﻿using System.Numerics;
+using System.Runtime.InteropServices;
+using UO3D.Runtime.RHI.Resources;
 
 namespace UO3D.Runtime.RHI;
+
+[StructLayout(LayoutKind.Sequential, Pack = 16)]
+public struct ModelViewProjection
+{
+    public Matrix4x4 Projection;
+    public Matrix4x4 View;
+}
 
 public interface IRenderContext
 {
@@ -9,6 +18,8 @@ public interface IRenderContext
     public IGraphicsPipeline GraphicsPipline { get; set; }
 
     public IRenderIndexBuffer IndexBuffer { get; set; }
+
+    public ModelViewProjection MVP { get; set; }
 
     public void BeginRenderPass(in RenderPassInfo renderPassInfo);
     public void EndRenderPass();

@@ -46,7 +46,8 @@ internal class SDL3GPUShaderProgram: Sdl3GpuResource
                     entrypoint = p,
                     stage = stage,
                     format = SDL_GPUShaderFormat.SDL_GPU_SHADERFORMAT_DXIL,
-                    num_uniform_buffers = (uint)UniformBindings.Length
+                    num_uniform_buffers = (uint)UniformBindings.Length,
+                    num_samplers = compileResult.NumSamplers,
                 };
 
                 Handle = SDL_CreateGPUShader(Device.Handle, createInfo);
