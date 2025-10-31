@@ -54,7 +54,7 @@ internal class UO3DApplication: Application
             View = Matrix4x4.CreateTranslation(-0.5f, -0.5f, 0.0f)
         };
 
-        _shaderInstance.SetParameter()
+        _shaderInstance.SetTexture(_textureBindingHandle, _whiteTexture);
 
         context.GraphicsPipline = _pipeline;
         context.ShaderInstance = _shaderInstance;
