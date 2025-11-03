@@ -13,7 +13,8 @@ internal class UO3DApplication: Application
     private ShaderBindingHandle _projectionBinding;
     private IGraphicsPipeline _pipeline = null!;
     private IRenderTexture _whiteTexture = null!;
-    ShaderBindingHandle _textureBindingHandle = null!;
+    private ShaderBindingHandle _textureBindingHandle = ShaderBindingHandle.Invalid;
+    private ShaderBindingHandle _samplerBindingHandle = ShaderBindingHandle.Invalid;
 
     protected override void Initialise()
     {
@@ -28,6 +29,7 @@ internal class UO3DApplication: Application
         _shaderInstance = renderFactory.NewShaderInstance(_shaderResource);
 
         _textureBindingHandle = _shaderInstance.GetBindingHandleTexturePixel("Texture");
+        _samplerBindingHandle = _shaderInstance.GetBindingHandleSamplerPixel("Sampler");
 
         _whiteTexture = renderFactory.CreateTexture(22, 22);
 
@@ -55,6 +57,7 @@ internal class UO3DApplication: Application
         };
 
         _shaderInstance.SetTexture(_textureBindingHandle, _whiteTexture);
+        _shaderInstance.SetSampler(_samplerBindingHandle, new RhiSampler { Filter = SamplerFilter.Point});
 
         context.GraphicsPipline = _pipeline;
         context.ShaderInstance = _shaderInstance;

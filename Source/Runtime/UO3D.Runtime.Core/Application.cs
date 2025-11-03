@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 
 using UO3D.Runtime.Platform;
@@ -163,11 +164,23 @@ public class Application: IDisposable
                 continue; // skip invalid DLLs
             }
 
-            Type[] types;
+            Console.WriteLine($"Loaded {dll}.");
+
+            Type[] types = null!;
 
             try
             {
                 types = assembly.GetTypes();
+            }
+            catch(ReflectionTypeLoadException ex)
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine($"Error loading types from {assembly.FullName}:");
+                foreach (var t in ex.Types)
+                    sb.AppendLine($"Type: {t?.FullName ?? "(null)"}");
+                foreach (var le in ex.LoaderExceptions)
+                    sb.AppendLine($"LoaderException: {le.Message}");
+                Console.WriteLine(sb.ToString());
             }
             catch
             {

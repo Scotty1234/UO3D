@@ -1,14 +1,14 @@
 ﻿
 namespace UO3D.Runtime.RHI;
 
-public enum RhiCullMode
+public enum RhiCullMode: byte
 {
     Disable,
     Back,
     Front
 }
 
-public enum RhiFillMode
+public enum RhiFillMode: byte
 {
     Fill,
     Wireframe

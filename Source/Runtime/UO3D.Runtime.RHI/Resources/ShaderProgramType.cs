@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UO3D.Runtime.RHI.Resources;
+﻿namespace UO3D.Runtime.RHI.Resources;
 
 public enum ShaderProgramType
 {
@@ -13,4 +7,12 @@ public enum ShaderProgramType
     Compute,
     Count,
     Invalid
+}
+
+public static class ShaderProgramTypeExtensions
+{
+    public static int ToInt(this ShaderProgramType shaderProgramType)
+    {
+        return (int)shaderProgramType;
+    }
 }

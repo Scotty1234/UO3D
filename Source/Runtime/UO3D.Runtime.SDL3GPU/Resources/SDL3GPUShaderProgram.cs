@@ -11,7 +11,7 @@ internal class SDL3GPUShaderProgram: Sdl3GpuResource
 {
     public readonly ShaderProgramType Type;
 
-    public readonly ShaderParameter[] UniformBindings = [];
+    public readonly ShaderParameter[] InputBindings = [];
     public readonly ShaderStreamBinding[] StreamBindings = [];
 
     public SDL3GPUShaderProgram(Sdl3GpuDevice device, ShaderProgramType type, in ShaderProgramCompileResult compileResult)
@@ -29,7 +29,7 @@ internal class SDL3GPUShaderProgram: Sdl3GpuResource
         }
 
         StreamBindings = compileResult.StreamBindings;
-        UniformBindings = compileResult.UniformBindings;
+        InputBindings = compileResult.ShaderBindings;
 
         string entryName = "main";
         Span<byte> span = Encoding.ASCII.GetBytes(entryName);
@@ -46,8 +46,8 @@ internal class SDL3GPUShaderProgram: Sdl3GpuResource
                     entrypoint = p,
                     stage = stage,
                     format = SDL_GPUShaderFormat.SDL_GPU_SHADERFORMAT_DXIL,
-                    num_uniform_buffers = (uint)UniformBindings.Length,
-                    num_samplers = compileResult.NumSamplers,
+                    num_uniform_buffers = (uint)compileResult.ShaderBindings.Count(p => p.InputType == RhiShaderInputType.Buffer),
+                    num_samplers = (uint)compileResult.ShaderBindings.Count(p => p.InputType == RhiShaderInputType.Sampler),
                 };
 
                 Handle = SDL_CreateGPUShader(Device.Handle, createInfo);

@@ -20,14 +20,14 @@ public struct ShaderVariable
 }
 
 [DebuggerDisplay("{Name}")]
-public struct ShaderParameter
+public readonly struct ShaderParameter
 {
-    public string Name;
-    public uint StartOffset;
-    public uint Size;
-    public RhiShaderInputType InputType;
-    public uint SlotIndex;
-    public ShaderVariable[] Variables;
+    public readonly string Name { get; init; }
+    public readonly uint StartOffset { get; init; }
+    public readonly uint Size { get; init; }
+    public readonly RhiShaderInputType InputType { get; init; }
+    public readonly uint SlotIndex { get; init; }
+    public readonly ShaderVariable[] Variables { get; init; }
 }
 
 [DebuggerDisplay("{SemanticName}, {SemanticIndex}")]
@@ -53,48 +53,42 @@ public readonly struct ShaderBindingHandle
     }
 }
 
+public struct ShaderProgramBindings
+{
+    public ShaderParameter[] Parameters;
+}
+
 public abstract class RhiShaderResource
 {
-    public ShaderParameter[] VertexParameters { get; protected set; }
-    public ShaderParameter[] PixelParameters { get; protected set; }
+    public ShaderProgramBindings[] ProgramBindings { get; protected set; } = new ShaderProgramBindings[ShaderProgramType.Count.ToInt()];
+
+    protected uint[] _numTextures = new uint[(int)ShaderProgramType.Count];
+    protected uint[] _numSamplers = new uint[(int)ShaderProgramType.Count];
 
     public abstract void Load(string vertexShader, string fragmentShader);
 
     public ShaderBindingHandle GetBindingHandle(ShaderProgramType programType, RhiShaderInputType inputType, string name)
     {
-        switch (programType)
+        for (int i = 0; i < ProgramBindings[(int)programType].Parameters.Length; i++)
         {
-            case ShaderProgramType.Vertex: return GetBindingHandleVertex(inputType, name);
-            case ShaderProgramType.Pixel: return GetBindingHandlePixel(inputType, name);
-            default: break;
-        }
+            ref var param = ref ProgramBindings[(int)programType].Parameters[i];
 
-        throw new UnreachableException("Could not find shader binding handle.");
-    }
-
-    private ShaderBindingHandle GetBindingHandleVertex(RhiShaderInputType inputType, string name)
-    {
-        for(int i = 0; i < VertexParameters.Length; i++)
-        {
-            if ((VertexParameters[i].Name == name) && (VertexParameters[i].InputType == inputType)
+            if (param.Name == name && param.InputType == inputType)
             {
-                return new ShaderBindingHandle((ushort)i, ShaderProgramType.Vertex);
+                return new ShaderBindingHandle((ushort)i, programType);
             }
         }
 
         throw new UnreachableException("Could not find shader binding handle in vertex shader.");
     }
 
-    private ShaderBindingHandle GetBindingHandlePixel(RhiShaderInputType inputType, string name)
+    public uint GetNumTextures(ShaderProgramType programType)
     {
-        for (int i = 0; i < PixelParameters.Length; i++)
-        {
-            if ((PixelParameters[i].Name == name) && (PixelParameters[i].InputType == inputType))
-            {
-                return new ShaderBindingHandle((ushort)i, ShaderProgramType.Pixel);
-            }
-        }
+        return _numTextures[(int)programType];
+    }
 
-        throw new UnreachableException("Could not find shader binding handle in pixel shader.");
+    public uint GetNumSamplers(ShaderProgramType programType)
+    {
+        return _numSamplers[(int)programType];
     }
 }

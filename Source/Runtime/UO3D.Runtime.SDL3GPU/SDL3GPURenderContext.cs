@@ -183,7 +183,7 @@ internal class SDL3GPURenderContext: IRenderContext
 
         if(_shaderInstanceDirty)
         {
-            //BindShaderParameters();
+            BindShaderParameters();
 
             _shaderInstanceDirty = false;
         }
@@ -195,24 +195,88 @@ internal class SDL3GPURenderContext: IRenderContext
     {
         for(int i = 0; i < (int)ShaderProgramType.Count; i++)
         {
-            var bindings = _shaderInstance.BindingData[i].Bindings;
+            ref var bindings = ref _shaderInstance.BindingData[i].Bindings;
 
             if(bindings is null)
             {
                 continue;
             }
 
-            var upload = UploadFuncs[i];
-
-            foreach (var entry in bindings)
+            switch((ShaderProgramType)i)
             {
-               unsafe
-                {
-                    fixed(byte* data = entry.Data)
+                case ShaderProgramType.Vertex:
                     {
-                        upload(RecordedCommands, entry.BindingIndex, (IntPtr)data, (uint)entry.Data.Length);
+                        BindParametersForVertexProgram(bindings);
+
+                        break;
                     }
-                }
+                case ShaderProgramType.Pixel:
+                    {
+                        BindParametersForPixelProgram(bindings);
+
+                        break;
+                    }
+                default:
+                    throw new UnreachableException("No bind parameters implements.");
+            }
+        }
+    }
+
+    private void BindParametersForVertexProgram(ShaderBindingDataEntry[] bindingEntries)
+    {
+        for(int i = 0; i < bindingEntries.Length; i++)
+        {
+            ref var entry = ref bindingEntries[i];
+
+            switch(entry.InputType)
+            {
+                case RhiShaderInputType.Buffer:
+                    {
+                        unsafe
+                        {
+                            fixed(byte* ptr = entry.Data.Buffer)
+                            {
+                                SDL_PushGPUVertexUniformData(RecordedCommands, entry.BindingIndex, (IntPtr)ptr, (uint)entry.Data.Buffer.Length);
+                            }
+                        }
+
+                        break;
+                    }
+
+                default:
+                    throw new UnreachableException("BindParametersForVertexProgram: Unhandled input type");
+            }
+        }
+    }
+
+    struct TextureBindingDesc
+    {
+
+    }
+
+    private void BindParametersForPixelProgram(ShaderBindingDataEntry[] bindingEntries)
+    {
+        TextureBindingDesc[] texBindingDescs = new TextureBindingDesc[5];
+
+        TextureBindingDesc desc;
+
+        foreach (var entry in bindingEntries)
+        {
+            switch(entry.InputType)
+            {
+                case RhiShaderInputType.Texture:
+                    {
+                        break;
+                    }
+
+                case RhiShaderInputType.Sampler:
+                    {
+                        //SDL_BindGPUFragmentSamplers(_renderPass, entry.BindingIndex, 
+                        break;
+                    }
+                default:
+                    throw new UnreachableException("BindParametersForPixelProgram: Unhandled input type");
+
             }
         }
     }

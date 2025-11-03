@@ -54,7 +54,7 @@ internal class SDL3GPUTexture: Sdl3GpuResource, IRenderTexture
 
         IntPtr transferBuffer = SDL_CreateGPUTransferBuffer(Device.Handle, new SDL_GPUTransferBufferCreateInfo
         {
-            size = 0,
+            size = (uint)(texels.Length * sizeof(uint)),
             usage = SDL_GPUTransferBufferUsage.SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD
         });
 

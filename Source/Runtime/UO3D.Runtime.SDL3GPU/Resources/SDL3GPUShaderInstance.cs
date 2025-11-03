@@ -22,7 +22,7 @@ internal class Sdl3GpuShaderResource: RhiShaderResource
         VertexProgram = new SDL3GPUShaderProgram(_device, ShaderProgramType.Vertex, vertexCompileResult);
         PixelProgram = new SDL3GPUShaderProgram(_device, ShaderProgramType.Pixel, fragmentCompileResult);
 
-        VertexParameters = [.. VertexProgram.UniformBindings];
-        PixelParameters = [.. PixelProgram.UniformBindings];
+        ProgramBindings[ShaderProgramType.Vertex.ToInt()].Parameters = [.. VertexProgram.InputBindings];
+        ProgramBindings[ShaderProgramType.Pixel.ToInt()].Parameters = [.. PixelProgram.InputBindings];
     }
 }

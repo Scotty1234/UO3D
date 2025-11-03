@@ -12,8 +12,9 @@ struct ShaderProgramCompileResult
 {
     public byte[] ByteCode;
     public ShaderStreamBinding[] StreamBindings;
-    public ShaderParameter[] UniformBindings;
-    public uint NumSamplers;
+    public ShaderParameter[] ShaderBindings;
+    //public uint NumSamplers;
+    //public uint NumTextures;
 }
 
 internal class UO3DDxcCompiler
@@ -98,14 +99,12 @@ internal class UO3DDxcCompiler
             }
             else if(resourceDescription.Type == ShaderInputType.Sampler)
             {
+                inputType = RhiShaderInputType.Sampler;
+
                 if(resourceDescription.Space != 2)
                 {
                     throw new Exception("Samplers must be in shader register space 2 for Sdl3Gpu");
                 }
-
-                outCompileResult.NumSamplers++;
-
-                continue;
             }
             else if (resourceDescription.Type == ShaderInputType.Texture)
             {
@@ -131,7 +130,7 @@ internal class UO3DDxcCompiler
             });
         }
 
-        outCompileResult.UniformBindings = [.. shaderParameters];
+        outCompileResult.ShaderBindings = [.. shaderParameters];
 
         outCompileResult.StreamBindings = new ShaderStreamBinding[reflection.InputParameters.Length];
 
