@@ -1,5 +1,4 @@
-﻿
-namespace UO3D.Runtime.RHI;
+﻿namespace UO3D.Runtime.RHI;
 
 public enum RhiCullMode: byte
 {

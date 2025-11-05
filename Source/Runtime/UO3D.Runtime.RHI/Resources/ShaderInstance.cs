@@ -29,6 +29,10 @@ public struct ShaderBindingDataEntry
     public readonly RhiShaderInputType InputType;
     public ShaderBindingData Data;
 
+    public IRenderTexture Texture => GetTexture();
+
+    public RhiSampler Sampler => GetSampler();
+
     public ShaderBindingDataEntry(RhiShaderInputType inputType, uint index, uint dataSize)
     {
         InputType = inputType;
@@ -61,6 +65,21 @@ public struct ShaderBindingDataEntry
         Debug.Assert(InputType == RhiShaderInputType.Buffer);
 
         MemoryMarshal.Write(Data.Buffer.AsSpan(), value);
+    }
+
+    public IRenderTexture GetTexture()
+    {
+        Debug.Assert(InputType == RhiShaderInputType.Texture);
+
+        return Data.Texture;
+
+    }
+
+    public RhiSampler GetSampler()
+    {
+        Debug.Assert(InputType == RhiShaderInputType.Sampler);
+
+        return Data.Sampler;
     }
 }
 
@@ -129,27 +148,27 @@ public class ShaderInstance
 
     public void SetParameter(ShaderBindingHandle bindingHandle, in Matrix4x4 matrix)
     {
-        GetBindingData(bindingHandle, out var entry);
+        ref var entry = ref GetBindingData(bindingHandle);
 
         entry.SetBuffer(matrix);
     }
 
     public void SetTexture(ShaderBindingHandle bindingHandle, IRenderTexture texture)
     {
-        GetBindingData(bindingHandle, out var entry);
+        ref var entry = ref GetBindingData(bindingHandle);
 
         entry.SetTexture(texture);
     }
 
     public void SetSampler(ShaderBindingHandle bindingHandle, RhiSampler sampler)
     {
-        GetBindingData(bindingHandle, out var entry);
+        ref var entry = ref GetBindingData(bindingHandle);
 
         entry.SetSampler(sampler);
     }
 
-    private void GetBindingData(ShaderBindingHandle bindingHandle, out ShaderBindingDataEntry entry)
+    private ref ShaderBindingDataEntry GetBindingData(ShaderBindingHandle bindingHandle)
     {
-        entry = BindingData[(int)bindingHandle.ProgramType].Bindings[bindingHandle.Handle];
+        return ref BindingData[(int)bindingHandle.ProgramType].Bindings[bindingHandle.Handle];
     }
 }

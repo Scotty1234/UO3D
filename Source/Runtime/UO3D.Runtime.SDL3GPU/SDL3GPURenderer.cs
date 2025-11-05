@@ -13,6 +13,8 @@ internal class SDL3GPURenderer : IRenderer
 
     private readonly Sdl3GpuDevice _device;
 
+    private Sdl3GpuGlobalSamplers _globalSamplers;
+
     public SDL3GPURenderer(IWindow window, Sdl3GpuDevice device)
     {
         _window = window;
@@ -29,6 +31,7 @@ internal class SDL3GPURenderer : IRenderer
        }
 
         SwapChain = new SDL3GPUSwapChain(_device, _window.Handle);
+        _globalSamplers = new Sdl3GpuGlobalSamplers(_device);
     }
 
     public void Shutdown()
@@ -38,6 +41,6 @@ internal class SDL3GPURenderer : IRenderer
 
     public IRenderContext CreateRenderContext()
     {
-        return new SDL3GPURenderContext(_device);
+        return new SDL3GPURenderContext(_device, _globalSamplers);
     }
 }

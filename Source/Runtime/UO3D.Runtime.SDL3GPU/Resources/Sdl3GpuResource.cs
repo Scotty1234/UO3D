@@ -19,7 +19,6 @@ internal abstract class Sdl3GpuResource : IDisposable
 {
     public IntPtr Handle { get; protected set; }
    
-
     public string Name
     {
         get => _name;
