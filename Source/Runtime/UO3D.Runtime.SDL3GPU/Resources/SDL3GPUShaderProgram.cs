@@ -46,7 +46,7 @@ internal class SDL3GPUShaderProgram: Sdl3GpuResource
                     entrypoint = p,
                     stage = stage,
                     format = SDL_GPUShaderFormat.SDL_GPU_SHADERFORMAT_DXIL,
-                    num_uniform_buffers = (uint)compileResult.ShaderBindings.Count(p => p.InputType == RhiShaderInputType.Buffer),
+                    num_uniform_buffers = (uint)compileResult.ShaderBindings.Count(p => p.InputType == RhiShaderInputType.Constant),
                     num_samplers = (uint)compileResult.ShaderBindings.Count(p => p.InputType == RhiShaderInputType.Sampler),
                 };
 

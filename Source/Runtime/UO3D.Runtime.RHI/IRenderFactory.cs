@@ -7,7 +7,7 @@ public interface IRenderResourceFactory
     public RhiShaderResource NewShaderResource();
     public ShaderInstance NewShaderInstance(RhiShaderResource shaderResource);
 
-    public IRenderTexture CreateTexture(uint width, uint height);
+    public IRenderTexture CreateTexture(in RenderTextureDescription description);
 
     public IGraphicsPipeline CreateGraphicsPipeline(in GraphicsPipelineDescription graphicsPipelineDescription);
 

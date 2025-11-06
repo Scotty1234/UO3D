@@ -79,7 +79,7 @@ internal class UO3DDxcCompiler
             {
                 ID3D12ShaderReflectionConstantBuffer constantBuffer = reflection.GetConstantBufferByName(resourceDescription.Name);
 
-                inputType = RhiShaderInputType.Buffer;
+                inputType = RhiShaderInputType.Constant;
 
                 shaderVariables = new ShaderVariable[constantBuffer.Variables.Length];
 

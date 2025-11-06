@@ -6,6 +6,8 @@ namespace UO3D.Runtime.SDL3GPU;
 
 internal class Sdl3GpuGlobalSamplers
 {
+    public readonly Sdl3GpuSampler PointClamp;
+
     private readonly Sdl3GpuDevice _device;
     private readonly Dictionary<int, Sdl3GpuSampler> _globalSamplers = [];
 
@@ -13,7 +15,7 @@ internal class Sdl3GpuGlobalSamplers
     {
         _device = device;
 
-        RegisterGlobalSampler(new RhiSampler { Filter = SamplerFilter.Point });
+        PointClamp = RegisterGlobalSampler(new RhiSampler { Filter = SamplerFilter.Point });
     }
 
     public Sdl3GpuSampler GetSampler(RhiSampler rhiSampler)
@@ -23,10 +25,12 @@ internal class Sdl3GpuGlobalSamplers
         return _globalSamplers[rhiSampler.GetHashCode()];
     }
 
-    private void RegisterGlobalSampler(RhiSampler rhiSampler)
+    private Sdl3GpuSampler RegisterGlobalSampler(RhiSampler rhiSampler)
     {
         var globalSampler = new Sdl3GpuSampler(_device, rhiSampler);
 
         _globalSamplers.Add(globalSampler.Description.GetHashCode(), globalSampler);
+
+        return globalSampler;
     }
 }

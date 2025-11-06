@@ -19,8 +19,8 @@ static const float4 cQuadVertsNDC[4] =
 
 static const float2 cQuadUVs[4] =
 {
-    { 1.0,  0.0 },
     { 0.0,  0.0 },
+    { 0.0,  1.0 },
     { 1.0,  1.0 },
     { 0.0,  1.0 },
 };
@@ -30,11 +30,6 @@ cbuffer PerViewData : register(b0, space1)
     float4x4 View;
     float4x4 Projection;
 };
-
-//cbuffer PerInstanceData : register(b1, space1)
-//{
-    
-//};
 
 VsToPs main(uint vid : SV_VertexID, uint instance_id : SV_InstanceID)
 {

@@ -27,13 +27,18 @@ internal class SDL3GPUResourceFactory : IRenderResourceFactory
         return new ShaderInstance(shaderResource);
     }
 
-    public IRenderTexture CreateTexture(uint width, uint height)
+    public IRenderTexture CreateTexture(in RenderTextureDescription description)
     {
         var texture = new SDL3GPUTexture(_device, new SDL3GPUTextureDescription
         {
-            Width = width,
-            Height = height,
-            Usage = SDL3.SDL.SDL_GPUTextureUsageFlags.SDL_GPU_TEXTUREUSAGE_COLOR_TARGET
+            CreateInfo = new SDL_GPUTextureCreateInfo
+            {
+                width = description.Width,
+                height = description.Height,
+                format = SDL_GPUTextureFormat.SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
+                usage = SDL_GPUTextureUsageFlags.SDL_GPU_TEXTUREUSAGE_SAMPLER
+            },
+            Name = description.Name,
         });
 
         texture.Init();

@@ -38,7 +38,7 @@ public struct ShaderBindingDataEntry
         InputType = inputType;
         BindingIndex = index;
 
-        if(InputType == RhiShaderInputType.Buffer)
+        if((InputType == RhiShaderInputType.Buffer) || (InputType == RhiShaderInputType.Constant))
         {
             Debug.Assert(dataSize > 0);
 
@@ -60,9 +60,9 @@ public struct ShaderBindingDataEntry
         Data.Texture = texture;
     }
 
-    public void SetBuffer<T>(T value) where T: struct
+    public void SetData<T>(T value) where T: struct
     {
-        Debug.Assert(InputType == RhiShaderInputType.Buffer);
+        Debug.Assert((InputType == RhiShaderInputType.Buffer) || (InputType == RhiShaderInputType.Constant));
 
         MemoryMarshal.Write(Data.Buffer.AsSpan(), value);
     }
@@ -131,6 +131,11 @@ public class ShaderInstance
         return _shaderResource.GetNumSamplers(programType);
     }
 
+    public ShaderBindingHandle GetBindingHandleConstantVertex(string name)
+    {
+        return GetBindingHandle(ShaderProgramType.Vertex, RhiShaderInputType.Constant, name);
+    }
+
     public ShaderBindingHandle GetBindingHandleTexturePixel(string name)
     {
         return GetBindingHandle(ShaderProgramType.Pixel, RhiShaderInputType.Texture, name);
@@ -150,7 +155,7 @@ public class ShaderInstance
     {
         ref var entry = ref GetBindingData(bindingHandle);
 
-        entry.SetBuffer(matrix);
+        entry.SetData(matrix);
     }
 
     public void SetTexture(ShaderBindingHandle bindingHandle, IRenderTexture texture)
@@ -165,6 +170,14 @@ public class ShaderInstance
         ref var entry = ref GetBindingData(bindingHandle);
 
         entry.SetSampler(sampler);
+    }
+
+    public void SetData<T>(ShaderBindingHandle bindingHandle, T data) where T : struct
+    {
+        ref var entry = ref GetBindingData(bindingHandle);
+
+        entry.SetData(data);
+
     }
 
     private ref ShaderBindingDataEntry GetBindingData(ShaderBindingHandle bindingHandle)

@@ -227,6 +227,7 @@ internal class SDL3GPURenderContext: IRenderContext
             switch(entry.InputType)
             {
                 case RhiShaderInputType.Buffer:
+                case RhiShaderInputType.Constant:
                     {
                         unsafe
                         {
@@ -261,6 +262,7 @@ internal class SDL3GPURenderContext: IRenderContext
                 case RhiShaderInputType.Texture:
                     {
                         samplerBinding.texture = entry.Texture.Handle;
+                        
                         break;
                     }
 

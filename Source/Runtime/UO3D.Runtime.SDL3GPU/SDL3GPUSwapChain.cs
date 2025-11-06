@@ -38,12 +38,15 @@ internal class SDL3GPUSwapChain: IRenderSwapChain
         }
 
        var backbufferTexture = new SDL3GPUTexture(_device, new SDL3GPUTextureDescription
-        {
-            Width = _backbufferWidth,
-            Height = _backbufferHeight,
-            Name = "Backbuffer",
-            Usage = SDL_GPUTextureUsageFlags.SDL_GPU_TEXTUREUSAGE_COLOR_TARGET,
-            Format = _format
+       {
+           CreateInfo = new SDL_GPUTextureCreateInfo
+           {
+               width = _backbufferWidth,
+               height = _backbufferHeight,
+               usage = SDL_GPUTextureUsageFlags.SDL_GPU_TEXTUREUSAGE_COLOR_TARGET,
+               format = _format
+           },
+           Name = "Backbuffer",
         });
 
         backbufferTexture.InitFromExistingResource(_backbufferToRenderInto);

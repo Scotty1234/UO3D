@@ -7,6 +7,7 @@ public enum RhiShaderInputType
     Buffer,
     Texture,
     Sampler,
+    Constant,
     Count,
     Invalid
 }
